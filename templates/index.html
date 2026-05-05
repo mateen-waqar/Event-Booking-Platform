@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>TicketVault — Event Booking</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+/* ─── RESET & VARIABLES ─────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;
+  --surface:#13131c;
+  --card:#1a1a27;
+  --border:#2a2a3d;
+  --accent:#ff4d00;
+  --accent2:#ff8c42;
+  --gold:#f5c518;
+  --green:#00e676;
+  --text:#f0f0f8;
+  --muted:#6b6b8a;
+  --radius:14px;
+  --shadow:0 8px 32px rgba(0,0,0,.5);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* ─── SCROLLBAR ─────────────────────────────────────── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ─── HERO NAV ──────────────────────────────────────── */
+header{
+  background:linear-gradient(135deg,#0a0a0f 0%,#13131c 100%);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:blur(20px);
+}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;max-width:1400px;margin:auto}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-tabs{display:flex;gap:4px;background:var(--surface);padding:4px;border-radius:10px;border:1px solid var(--border)}
+.tab-btn{background:none;border:none;color:var(--muted);padding:8px 18px;border-radius:7px;
+  cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;
+  transition:all .2s}
+.tab-btn.active{background:var(--accent);color:#fff}
+.tab-btn:hover:not(.active){color:var(--text);background:var(--border)}
+
+/* ─── HERO ──────────────────────────────────────────── */
+.hero{
+  text-align:center;padding:80px 2rem 60px;
+  background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(255,77,0,.12),transparent);
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff4d00' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,7rem);
+  line-height:.95;letter-spacing:3px;position:relative}
+.hero-title span{color:var(--accent)}
+.hero-sub{color:var(--muted);font-size:1.1rem;margin-top:1rem;font-weight:300}
+
+/* ─── STATS BAR ─────────────────────────────────────── */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;
+  max-width:1000px;margin:2rem auto 0;padding:0 2rem}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.2rem;text-align:center;transition:transform .2s}
+.stat-card:hover{transform:translateY(-3px)}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--accent);line-height:1}
+.stat-label{color:var(--muted);font-size:.78rem;margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+
+/* ─── MAIN CONTENT ──────────────────────────────────── */
+.main{max-width:1400px;margin:0 auto;padding:2rem}
+.page{display:none}.page.active{display:block}
+
+/* ─── SECTION HEADER ────────────────────────────────── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px}
+.section-title span{color:var(--accent)}
+
+/* ─── BUTTONS ───────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:8px;
+  cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;transition:all .2s;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff;padding:10px 20px;font-size:.9rem}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 4px 20px rgba(255,77,0,.4)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);padding:8px 16px;font-size:.85rem}
+.btn-ghost:hover{color:var(--text);border-color:var(--muted)}
+.btn-danger{background:rgba(255,50,50,.15);color:#ff6b6b;border:1px solid rgba(255,50,50,.3);padding:6px 14px;font-size:.82rem}
+.btn-danger:hover{background:rgba(255,50,50,.3)}
+.btn-success{background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.3);padding:6px 14px;font-size:.82rem}
+.btn-success:hover{background:rgba(0,230,118,.3)}
+.btn-sm{padding:6px 12px;font-size:.8rem}
+
+/* ─── FORM ──────────────────────────────────────────── */
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:2rem;margin-bottom:2rem;box-shadow:var(--shadow)}
+.form-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px;
+  margin-bottom:1.5rem;color:var(--text)}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.form-group input,.form-group select{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:10px 14px;color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:.9rem;
+  transition:border-color .2s;outline:none}
+.form-group input:focus,.form-group select:focus{border-color:var(--accent)}
+.form-group select option{background:var(--surface)}
+.form-actions{margin-top:1.5rem;display:flex;gap:.75rem;flex-wrap:wrap}
+
+/* ─── TICKET TABLE ──────────────────────────────────── */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.table-wrap table{width:100%;border-collapse:collapse}
+.table-wrap th{background:var(--surface);padding:12px 16px;text-align:left;
+  font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.table-wrap td{padding:12px 16px;border-top:1px solid var(--border);font-size:.88rem;vertical-align:middle}
+.table-wrap tr:hover td{background:rgba(255,77,0,.04)}
+.ticket-id{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);font-weight:600}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.badge-vip{background:rgba(245,197,24,.15);color:var(--gold)}
+.badge-regular{background:rgba(100,149,237,.15);color:#6495ed}
+.badge-economy{background:rgba(107,107,138,.2);color:var(--muted)}
+.badge-paid{background:rgba(0,230,118,.15);color:var(--green)}
+.badge-pending{background:rgba(255,193,7,.15);color:#ffc107}
+.no-data{text-align:center;color:var(--muted);padding:3rem;font-size:.9rem}
+
+/* ─── EVENTS GRID ───────────────────────────────────── */
+.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.2rem}
+.event-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.5rem;transition:all .25s;cursor:pointer;position:relative;overflow:hidden}
+.event-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.event-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 12px 40px rgba(255,77,0,.2)}
+.event-name{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px;margin-bottom:.5rem}
+.event-meta{display:flex;flex-direction:column;gap:4px}
+.event-meta span{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:6px}
+.event-meta span em{color:var(--text);font-style:normal;font-weight:500}
+.event-footer{margin-top:1rem;display:flex;justify-content:space-between;align-items:center}
+
+/* ─── SEAT MAP ──────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;
+  display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(8px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:20px;
+  width:100%;max-width:800px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.8)}
+.modal-header{padding:1.5rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--card);z-index:1}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:1px}
+.modal-close{background:var(--surface);border:1px solid var(--border);color:var(--muted);
+  width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{color:var(--text)}
+.modal-body{padding:1.5rem}
+.seat-section{margin-bottom:2rem}
+.seat-section-title{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;
+  color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.seat-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.seats-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.seat-label{font-size:.7rem;color:var(--muted);width:100%;font-family:'JetBrains Mono',monospace;margin-bottom:2px}
+.seat{width:38px;height:38px;border-radius:7px;border:1px solid var(--border);
+  background:var(--surface);color:var(--text);cursor:pointer;
+  font-size:.72rem;font-family:'JetBrains Mono',monospace;font-weight:600;
+  display:flex;align-items:center;justify-content:center;transition:all .15s}
+.seat:hover:not(.booked):not(.selected){background:rgba(255,77,0,.2);border-color:var(--accent)}
+.seat.selected{background:var(--accent);border-color:var(--accent);color:#fff}
+.seat.booked{background:var(--border);color:var(--muted);cursor:not-allowed;opacity:.5}
+.seat-legend{display:flex;gap:1.5rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted)}
+.legend-dot{width:14px;height:14px;border-radius:3px}
+
+/* ─── TOAST ─────────────────────────────────────────── */
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:500;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:1rem 1.5rem;font-size:.9rem;box-shadow:var(--shadow);
+  transform:translateY(100px);opacity:0;transition:all .3s;max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-left:4px solid var(--green)}
+.toast.error{border-left:4px solid #ff4444}
+
+/* ─── USERS TABLE ───────────────────────────────────── */
+.users-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+.user-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem}
+.user-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.2rem;margin-bottom:.75rem}
+.user-name{font-weight:600;font-size:.95rem}
+.user-info{font-size:.8rem;color:var(--muted);margin-top:3px}
+
+/* ─── LOADING ────────────────────────────────────────── */
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);
+  border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ─── PRICE BADGE ───────────────────────────────────── */
+.price-badge{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:600;color:var(--accent2)}
+
+/* ─── RESPONSIVE ─────────────────────────────────────── */
+@media(max-width:768px){
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .nav-tabs{display:none}
+  .form-grid{grid-template-columns:1fr}
+  .table-wrap{overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header>
+  <nav class="nav">
+    <div class="logo">⬛ TicketVault</div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="showPage('book')">🎟 Book</button>
+      <button class="tab-btn" onclick="showPage('tickets')">📋 Tickets</button>
+      <button class="tab-btn" onclick="showPage('events')">🎭 Events</button>
+      <button class="tab-btn" onclick="showPage('users')">👤 Users</button>
+    </div>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <h1 class="hero-title">BOOK YOUR<br/><span>EXPERIENCE.</span></h1>
+  <p class="hero-sub">Reserve seats for concerts, seminars, sports &amp; more — instantly.</p>
+  <div class="stats-bar">
+    <div class="stat-card"><div class="stat-num" id="st-total">—</div><div class="stat-label">Total Tickets</div></div>
+    <div class="stat-card"><div class="stat-num" id="st-paid">—</div><div class="stat-label">Paid</div></div>
+    <div class="stat-card"><div class="stat-num" id="st-revenue">—</div><div class="stat-label">Revenue (PKR)</div></div>
+    <div class="stat-card"><div class="stat-num" id="st-events">—</div><div class="stat-label">Events</div></div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ═══ BOOK PAGE ═══════════════════════════ -->
+  <div id="page-book" class="page active">
+    <div class="section-header">
+      <h2 class="section-title">NEW <span>BOOKING</span></h2>
+    </div>
+    <div class="form-card">
+      <div class="form-title">Ticket Details</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Your Name *</label>
+          <input id="b-name" placeholder="Full name" required/>
+        </div>
+        <div class="form-group">
+          <label>Event *</label>
+          <select id="b-event" onchange="onEventChange()">
+            <option value="">— Select event —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <select id="b-cat" onchange="onCatChange()">
+            <option value="">— Select category —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Price (PKR)</label>
+          <input id="b-price" readonly placeholder="Auto-filled" style="color:var(--accent2);font-family:'JetBrains Mono',monospace"/>
+        </div>
+        <div class="form-group">
+          <label>Seat *</label>
+          <div style="display:flex;gap:8px">
+            <input id="b-seat" readonly placeholder="Select from seat map" style="flex:1"/>
+            <button class="btn btn-ghost" onclick="openSeatMap()" id="seat-map-btn" disabled>🗺 Map</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Booking Date *</label>
+          <input id="b-bdate" type="date" value="2026-04-28"/>
+        </div>
+        <div class="form-group">
+          <label>Payment Status</label>
+          <select id="b-pay">
+            <option value="Pending">⏳ Pending</option>
+            <option value="Paid">✅ Paid</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Email (optional)</label>
+          <input id="b-email" type="email" placeholder="user@example.com"/>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="bookTicket()">🎟 Book Ticket</button>
+        <button class="btn btn-ghost" onclick="resetBookForm()">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TICKETS PAGE ════════════════════════ -->
+  <div id="page-tickets" class="page">
+    <div class="section-header">
+      <h2 class="section-title">ALL <span>TICKETS</span></h2>
+      <button class="btn btn-ghost btn-sm" onclick="loadTickets()">⟳ Refresh</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Ticket ID</th><th>Event</th><th>Attendee</th>
+            <th>Category</th><th>Price</th><th>Seat</th>
+            <th>Booked</th><th>Event Date</th><th>Location</th>
+            <th>Status</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="tickets-body">
+          <tr><td colspan="11" class="no-data"><div class="spinner"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ EVENTS PAGE ══════════════════════════ -->
+  <div id="page-events" class="page">
+    <div class="section-header">
+      <h2 class="section-title">MANAGE <span>EVENTS</span></h2>
+    </div>
+    <div class="form-card">
+      <div class="form-title">Add New Event</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Event Name *</label>
+          <input id="e-name" placeholder="e.g. Rock Concert"/>
+        </div>
+        <div class="form-group">
+          <label>Event Date *</label>
+          <input id="e-date" type="date"/>
+        </div>
+        <div class="form-group">
+          <label>Location *</label>
+          <input id="e-loc" placeholder="e.g. Lahore Arena"/>
+        </div>
+        <div class="form-group">
+          <label>Total Seats</label>
+          <input id="e-seats" type="number" value="100"/>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="addEvent()">+ Add Event</button>
+      </div>
+    </div>
+    <div class="events-grid" id="events-grid">
+      <div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:2rem"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ USERS PAGE ═══════════════════════════ -->
+  <div id="page-users" class="page">
+    <div class="section-header">
+      <h2 class="section-title">REGISTERED <span>USERS</span></h2>
+    </div>
+    <div class="users-grid" id="users-grid">
+      <div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- SEAT MAP MODAL -->
+<div class="modal-overlay" id="seat-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-event-name">Select Your Seat</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-top:2px">Grey = already booked</div>
+      </div>
+      <button class="modal-close" onclick="closeSeatMap()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="seat-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--surface);border:1px solid var(--border)"></div>Available</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Selected</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--border);opacity:.5"></div>Booked</div>
+      </div>
+      <div id="seat-map-content"></div>
+      <div style="margin-top:1.5rem;display:flex;gap:.75rem">
+        <button class="btn btn-primary" onclick="confirmSeat()">✔ Confirm Seat</button>
+        <button class="btn btn-ghost" onclick="closeSeatMap()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:5000/api';
+let categories = [], events = [], selectedSeat = null, bookedSeats = [];
+
+// ── PAGE SWITCHING ────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'tickets') loadTickets();
+  if (name === 'events') loadEvents();
+  if (name === 'users') loadUsers();
+}
+
+// ── TOAST ─────────────────────────────────────────
+function toast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast ' + type + ' show';
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ── STATS ─────────────────────────────────────────
+async function loadStats() {
+  try {
+    const r = await fetch(API + '/stats');
+    const d = await r.json();
+    document.getElementById('st-total').textContent = d.total;
+    document.getElementById('st-paid').textContent = d.paid;
+    document.getElementById('st-revenue').textContent = (d.revenue / 1000).toFixed(1) + 'K';
+    document.getElementById('st-events').textContent = d.events;
+  } catch { }
+}
+
+// ── DROPDOWNS ─────────────────────────────────────
+async function loadDropdowns() {
+  const [cr, er] = await Promise.all([fetch(API + '/categories'), fetch(API + '/events')]);
+  categories = await cr.json();
+  events = await er.json();
+
+  const cSel = document.getElementById('b-cat');
+  categories.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.id; o.textContent = `${c.name} — PKR ${c.price.toLocaleString()}`;
+    o.dataset.price = c.price; cSel.appendChild(o);
+  });
+
+  const eSel = document.getElementById('b-event');
+  events.forEach(e => {
+    const o = document.createElement('option');
+    o.value = e.id; o.textContent = e.name; eSel.appendChild(o);
+  });
+}
+
+function onCatChange() {
+  const sel = document.getElementById('b-cat');
+  const opt = sel.options[sel.selectedIndex];
+  document.getElementById('b-price').value = opt.dataset.price
+    ? 'PKR ' + Number(opt.dataset.price).toLocaleString() : '';
+}
+
+function onEventChange() {
+  document.getElementById('b-seat').value = '';
+  selectedSeat = null;
+  bookedSeats = [];
+  const hasEvent = document.getElementById('b-event').value;
+  document.getElementById('seat-map-btn').disabled = !hasEvent;
+}
+
+// ── SEAT MAP ──────────────────────────────────────
+async function openSeatMap() {
+  const eid = document.getElementById('b-event').value;
+  if (!eid) return;
+  const ev = events.find(e => e.id == eid);
+  document.getElementById('modal-event-name').textContent = ev?.name || 'Select Seat';
+
+  const r = await fetch(API + '/tickets/booked-seats/' + eid);
+  bookedSeats = await r.json();
+
+  buildSeatMap();
+  document.getElementById('seat-modal').classList.add('open');
+}
+
+function buildSeatMap() {
+  const sections = [
+    { name: 'VIP SECTION', rows: ['A', 'B'], cols: 12, cat: 'VIP', price: '' },
+    { name: 'REGULAR SECTION', rows: ['C', 'D', 'E', 'F'], cols: 14, cat: 'Regular', price: '' },
+    { name: 'ECONOMY SECTION', rows: ['G', 'H', 'I', 'J'], cols: 16, cat: 'Economy', price: '' },
+  ];
+  // inject prices
+  categories.forEach(c => {
+    const s = sections.find(s => s.cat === c.name);
+    if (s) s.price = `PKR ${c.price.toLocaleString()} / SEAT`;
+  });
+
+  let html = '';
+  sections.forEach(sec => {
+    html += `<div class="seat-section">
+      <div class="seat-section-title">${sec.name} &nbsp; <span style="color:var(--muted);font-size:.7rem">${sec.price}</span></div>`;
+    sec.rows.forEach(row => {
+      html += `<div class="seat-label">${row}</div><div class="seats-row">`;
+      for (let c = 1; c <= sec.cols; c++) {
+        const seatId = `${row}${c}`;
+        const isBooked = bookedSeats.includes(seatId);
+        const isSel = selectedSeat === seatId;
+        html += `<button class="seat${isBooked ? ' booked' : ''}${isSel ? ' selected' : ''}"
+          onclick="selectSeat('${seatId}',this)"
+          ${isBooked ? 'disabled' : ''}>${c}</button>`;
+      }
+      html += `</div>`;
+    });
+    html += `</div>`;
+  });
+  document.getElementById('seat-map-content').innerHTML = html;
+}
+
+function selectSeat(id, btn) {
+  document.querySelectorAll('.seat.selected').forEach(s => s.classList.remove('selected'));
+  selectedSeat = id;
+  btn.classList.add('selected');
+}
+
+function confirmSeat() {
+  if (!selectedSeat) { toast('Please select a seat first', 'error'); return; }
+  document.getElementById('b-seat').value = selectedSeat;
+  closeSeatMap();
+}
+
+function closeSeatMap() {
+  document.getElementById('seat-modal').classList.remove('open');
+}
+
+// ── BOOK TICKET ───────────────────────────────────
+async function bookTicket() {
+  const name = document.getElementById('b-name').value.trim();
+  const eid  = document.getElementById('b-event').value;
+  const cid  = document.getElementById('b-cat').value;
+  const seat = document.getElementById('b-seat').value.trim();
+  const bdate= document.getElementById('b-bdate').value;
+  const pay  = document.getElementById('b-pay').value;
+  const email= document.getElementById('b-email').value.trim();
+
+  if (!name || !eid || !cid || !seat) {
+    toast('Please fill all required fields and select a seat', 'error'); return;
+  }
+
+  try {
+    const r = await fetch(API + '/tickets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userName: name, eventId: +eid, categoryId: +cid,
+        seatNo: seat, bookingDate: bdate, paymentStatus: pay, email })
+    });
+    const d = await r.json();
+    if (!r.ok) { toast(d.error || 'Booking failed', 'error'); return; }
+    toast(`✅ Seat ${seat} booked successfully!`);
+    resetBookForm();
+    loadStats();
+  } catch { toast('Connection error — is server.py running?', 'error'); }
+}
+
+function resetBookForm() {
+  ['b-name','b-email','b-seat','b-price'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('b-event').selectedIndex = 0;
+  document.getElementById('b-cat').selectedIndex = 0;
+  document.getElementById('b-pay').selectedIndex = 0;
+  document.getElementById('b-bdate').value = '2026-04-28';
+  selectedSeat = null;
+  document.getElementById('seat-map-btn').disabled = true;
+}
+
+// ── TICKETS TABLE ─────────────────────────────────
+async function loadTickets() {
+  const tbody = document.getElementById('tickets-body');
+  tbody.innerHTML = '<tr><td colspan="11" class="no-data"><div class="spinner"></div></td></tr>';
+  try {
+    const r = await fetch(API + '/tickets');
+    const tickets = await r.json();
+    if (!tickets.length) {
+      tbody.innerHTML = '<tr><td colspan="11" class="no-data">No tickets booked yet.</td></tr>'; return;
+    }
+    tbody.innerHTML = tickets.map(t => `
+      <tr>
+        <td><span class="ticket-id">TKT-${t.ticketId}</span></td>
+        <td>${t.event}</td>
+        <td>${t.user}</td>
+        <td><span class="badge badge-${t.category.toLowerCase()}">${t.category}</span></td>
+        <td><span class="price-badge">PKR ${Number(t.price).toLocaleString()}</span></td>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:.8rem">${t.seat}</code></td>
+        <td>${t.booked}</td>
+        <td>${t.eventDate}</td>
+        <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.location}</td>
+        <td><span class="badge badge-${t.status.toLowerCase()}">${t.status}</span></td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap">
+          ${t.status !== 'Paid' ? `<button class="btn btn-success btn-sm" onclick="markPaid(${t.ticketId})">✔ Paid</button>` : ''}
+          <button class="btn btn-danger btn-sm" onclick="deleteTicket(${t.ticketId})">🗑</button>
+        </td>
+      </tr>`).join('');
+  } catch {
+    tbody.innerHTML = '<tr><td colspan="11" class="no-data">⚠️ Cannot reach server. Is server.py running?</td></tr>';
+  }
+}
+
+async function markPaid(id) {
+  await fetch(API + '/tickets/' + id, {
+    method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ paymentStatus: 'Paid' })
+  });
+  toast('Payment updated ✅'); loadTickets(); loadStats();
+}
+
+async function deleteTicket(id) {
+  if (!confirm('Delete ticket TKT-' + id + '?')) return;
+  await fetch(API + '/tickets/' + id, { method: 'DELETE' });
+  toast('Ticket deleted'); loadTickets(); loadStats();
+}
+
+// ── EVENTS ────────────────────────────────────────
+async function loadEvents() {
+  const grid = document.getElementById('events-grid');
+  grid.innerHTML = '<div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>';
+  try {
+    const r = await fetch(API + '/events');
+    const evs = await r.json();
+    grid.innerHTML = evs.map(e => `
+      <div class="event-card">
+        <div class="event-name">${e.name}</div>
+        <div class="event-meta">
+          <span>📅 <em>${e.date}</em></span>
+          <span>📍 <em>${e.location}</em></span>
+          <span>💺 <em>${e.seats} seats</em></span>
+        </div>
+        <div class="event-footer">
+          <span style="font-size:.78rem;color:var(--muted)">ID: ${e.id}</span>
+          <button class="btn btn-danger btn-sm" onclick="deleteEvent(${e.id},'${e.name}')">🗑 Remove</button>
+        </div>
+      </div>`).join('');
+  } catch { grid.innerHTML = '<div style="color:var(--muted)">⚠️ Cannot reach server.</div>'; }
+}
+
+async function addEvent() {
+  const name  = document.getElementById('e-name').value.trim();
+  const date  = document.getElementById('e-date').value;
+  const loc   = document.getElementById('e-loc').value.trim();
+  const seats = document.getElementById('e-seats').value;
+  if (!name || !date || !loc) { toast('Fill all required fields', 'error'); return; }
+  await fetch(API + '/events', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ eventName: name, eventDate: date, location: loc, totalSeats: +seats })
+  });
+  toast('Event added ✅');
+  ['e-name','e-date','e-loc'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('e-seats').value = 100;
+  loadEvents();
+  // refresh dropdowns
+  document.getElementById('b-event').innerHTML = '<option value="">— Select event —</option>';
+  const r = await fetch(API + '/events');
+  events = await r.json();
+  events.forEach(e => {
+    const o = document.createElement('option');
+    o.value = e.id; o.textContent = e.name;
+    document.getElementById('b-event').appendChild(o);
+  });
+}
+
+async function deleteEvent(id, name) {
+  if (!confirm(`Delete event "${name}"? This may affect booked tickets.`)) return;
+  await fetch(API + '/events/' + id, { method: 'DELETE' });
+  toast('Event removed'); loadEvents();
+}
+
+// ── USERS ─────────────────────────────────────────
+async function loadUsers() {
+  const grid = document.getElementById('users-grid');
+  grid.innerHTML = '<div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>';
+  try {
+    const r = await fetch(API + '/users');
+    const users = await r.json();
+    if (!users.length) { grid.innerHTML = '<p style="color:var(--muted)">No users registered yet.</p>'; return; }
+    grid.innerHTML = users.map(u => `
+      <div class="user-card">
+        <div class="user-avatar">${u.name.charAt(0).toUpperCase()}</div>
+        <div class="user-name">${u.name}</div>
+        <div class="user-info">${u.email || '—'}</div>
+        <div class="user-info">${u.phone || '—'}</div>
+        <div style="margin-top:.5rem;font-size:.75rem;color:var(--border);font-family:'JetBrains Mono',monospace">UID-${u.id}</div>
+      </div>`).join('');
+  } catch { grid.innerHTML = '<div style="color:var(--muted)">⚠️ Cannot reach server.</div>'; }
+}
+
+// ── INIT ──────────────────────────────────────────
+(async () => {
+  await loadDropdowns();
+  await loadStats();
+})();
+</script>
+</body>
+</html>
