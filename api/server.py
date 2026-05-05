@@ -1,8 +1,7 @@
-from flask import Flask
-from flask import Flask, send_from_directory
+from flask import Flask, render_template
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../templates")
 
 @app.route("/")
 def home():
-    return send_from_directory(".", "index.html")
+    return render_template("index.html")
