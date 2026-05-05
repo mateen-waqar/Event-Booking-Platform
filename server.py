@@ -16,7 +16,7 @@ def home():
 # ─────────────────────────────────────────────
 #  MS SQL SERVER CONNECTION  –  update these!
 # ─────────────────────────────────────────────
-SERVER   = "localhost"             # e.g. localhost\SQLEXPRESS  or  127.0.0.1
+SERVER   = "localhost"          # or "localhost\\SQLEXPRESS" for Express edition
 DATABASE = "TicketBookingDB"
 
 # Use Windows Authentication (Trusted Connection)

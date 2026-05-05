@@ -1,161 +1,275 @@
 -- ═══════════════════════════════════════════════════════
---   TicketVault Database Setup  ·  MS SQL Server
---   FA24-BSE-152  |  S.M. Mateen Ud Din
+--   TicketVault DB · ERD MATCHED VERSION (11 TABLES)
 -- ═══════════════════════════════════════════════════════
 
--- 1. Create & use database
 IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'TicketBookingDB')
     CREATE DATABASE TicketBookingDB;
-GO
+
 USE TicketBookingDB;
+
+-- ═══════════════════════════════════════════════════════
+-- ORGANIZERS
+-- ═══════════════════════════════════════════════════════
+CREATE TABLE Organizers (
+    OrganizerID INT IDENTITY PRIMARY KEY,
+    OrganizerName VARCHAR(100),
+    ContactEmail VARCHAR(100),
+    Phone VARCHAR(15),
+    Organization VARCHAR(100)
+);
+
+-- ═══════════════════════════════════════════════════════
+-- VENUES
+-- ═══════════════════════════════════════════════════════
+CREATE TABLE Venues (
+    VenueID INT IDENTITY PRIMARY KEY,
+    VenueName VARCHAR(100),
+    City VARCHAR(50),
+    Address VARCHAR(150),
+    Capacity INT CHECK (Capacity > 0)
+);
+
+-- ═══════════════════════════════════════════════════════
+-- USERS
+-- ═══════════════════════════════════════════════════════
+CREATE TABLE Users (
+    UserID INT IDENTITY PRIMARY KEY,
+    UserName VARCHAR(100),
+    Email VARCHAR(100) UNIQUE,
+    Phone VARCHAR(15),
+    CNIC VARCHAR(15) UNIQUE,
+    CreatedAt DATETIME DEFAULT GETDATE()
+);
+
+-- ═══════════════════════════════════════════════════════
+-- STAFF
+-- ═══════════════════════════════════════════════════════
+CREATE TABLE Staff (
+    StaffID INT IDENTITY PRIMARY KEY,
+    StaffName VARCHAR(100),
+    Role VARCHAR(50),
+    ShiftTime VARCHAR(50),
+    Phone VARCHAR(15),
+    Email VARCHAR(100),
+    HireDate DATE
+);
+
+-- ═══════════════════════════════════════════════════════
+-- EVENTS
+-- ═══════════════════════════════════════════════════════
+CREATE TABLE Events (
+    EventID INT IDENTITY PRIMARY KEY,
+    EventName VARCHAR(100),
+    EventDate DATE,
+    VenueID INT,
+    OrganizerID INT,
+    TotalSeats INT CHECK (TotalSeats > 0),
+    EventType VARCHAR(50),
+
+    FOREIGN KEY (VenueID) REFERENCES Venues(VenueID),
+    FOREIGN KEY (OrganizerID) REFERENCES Organizers(OrganizerID)
+);
+
+-- ═══════════════════════════════════════════════════════
+-- CATEGORIES
+-- ═══════════════════════════════════════════════════════
+CREATE TABLE Categories (
+    CategoryID INT IDENTITY PRIMARY KEY,
+    CategoryName VARCHAR(50),
+    Price DECIMAL(10,2)
+);
+
+-- ═══════════════════════════════════════════════════════
+-- DISCOUNTS
+-- ═══════════════════════════════════════════════════════
+CREATE TABLE Discounts (
+    DiscountID INT IDENTITY PRIMARY KEY,
+    Code VARCHAR(20),
+    Description VARCHAR(100),
+    Percentage DECIMAL(5,2),
+    ValidFrom DATE,
+    ValidUntil DATE,
+    IsActive BIT,
+
+    CHECK (ValidUntil >= ValidFrom)
+);
+
+-- ═══════════════════════════════════════════════════════
+-- EVENT TICKETS
+-- ═══════════════════════════════════════════════════════
+CREATE TABLE EventTickets (
+    TicketID INT IDENTITY PRIMARY KEY,
+    EventID INT,
+    UserID INT,
+    CategoryID INT,
+    StaffID INT,
+    DiscountID INT,
+    SeatNo VARCHAR(10),
+    BookingDate DATE DEFAULT GETDATE(),
+    PaymentStatus VARCHAR(20),
+
+    FOREIGN KEY (EventID) REFERENCES Events(EventID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
+    FOREIGN KEY (StaffID) REFERENCES Staff(StaffID),
+    FOREIGN KEY (DiscountID) REFERENCES Discounts(DiscountID),
+
+    CONSTRAINT UQ_Seat UNIQUE (EventID, SeatNo)
+);
+
+-- ═══════════════════════════════════════════════════════
+-- WAITLIST
+-- ═══════════════════════════════════════════════════════
+CREATE TABLE Waitlist (
+    WaitlistID INT IDENTITY PRIMARY KEY,
+    EventID INT,
+    UserID INT,
+    CategoryID INT,
+    RequestDate DATE DEFAULT GETDATE(),
+    Status VARCHAR(20),
+
+    FOREIGN KEY (EventID) REFERENCES Events(EventID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
+
+    CHECK (Status IN ('Waiting','Confirmed','Cancelled'))
+);
+
+-- ═══════════════════════════════════════════════════════
+-- PAYMENTS
+-- ═══════════════════════════════════════════════════════
+CREATE TABLE Payments (
+    PaymentID INT IDENTITY PRIMARY KEY,
+    TicketID INT UNIQUE,
+    Amount DECIMAL(10,2),
+    PaymentMethod VARCHAR(20),
+    TransactionDate DATETIME DEFAULT GETDATE(),
+    Status VARCHAR(20),
+    TransactionRef VARCHAR(50),
+
+    FOREIGN KEY (TicketID) REFERENCES EventTickets(TicketID)
+);
+
+-- ═══════════════════════════════════════════════════════
+-- CANCELLATIONS
+-- ═══════════════════════════════════════════════════════
+CREATE TABLE Cancellations (
+    CancellationID INT IDENTITY PRIMARY KEY,
+    TicketID INT,
+    Reason VARCHAR(100),
+    CancelDate DATE DEFAULT GETDATE(),
+    RefundStatus VARCHAR(20),
+    RefundAmount DECIMAL(10,2),
+    ProcessedBy INT,
+
+    FOREIGN KEY (TicketID) REFERENCES EventTickets(TicketID),
+    FOREIGN KEY (ProcessedBy) REFERENCES Staff(StaffID)
+);
+
+-- ═══════════════════════════════════════════════════════
+-- STORED PROCEDURE (UPDATED)
+-- ═══════════════════════════════════════════════════════
+GO
+CREATE PROCEDURE BookTicket
+    @UserID INT,
+    @EventID INT,
+    @CategoryID INT,
+    @SeatNo VARCHAR(10),
+    @PaymentMethod VARCHAR(20)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @Price DECIMAL(10,2);
+    DECLARE @TicketID INT;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- Seat check
+        IF EXISTS (SELECT 1 FROM EventTickets WHERE EventID=@EventID AND SeatNo=@SeatNo)
+        BEGIN
+            RAISERROR('Seat already booked',16,1);
+            ROLLBACK; RETURN;
+        END
+
+        -- Get price from category
+        SELECT @Price = Price FROM Categories WHERE CategoryID=@CategoryID;
+
+        -- Insert ticket
+        INSERT INTO EventTickets(EventID,UserID,CategoryID,SeatNo,PaymentStatus)
+        VALUES(@EventID,@UserID,@CategoryID,@SeatNo,'Paid');
+
+        SET @TicketID = SCOPE_IDENTITY();
+
+        -- Payment
+        INSERT INTO Payments(TicketID,Amount,PaymentMethod,Status)
+        VALUES(@TicketID,@Price,@PaymentMethod,'Paid');
+
+        COMMIT;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        PRINT ERROR_MESSAGE();
+    END CATCH
+END;
 GO
 
--- ─── TABLE 1 : Categories (fixed pricing tiers) ──────
-CREATE TABLE Categories (
-    CategoryID   INT           PRIMARY KEY IDENTITY(1,1),
-    CategoryName VARCHAR(20)   NOT NULL,
-    Price        DECIMAL(10,2) NOT NULL
-);
+-- ═══════════════════════════════════════════════════════
+-- TRIGGER: BLOCK OVERBOOKING
+-- ═══════════════════════════════════════════════════════
+GO
+CREATE TRIGGER trg_BlockOverbooking
+ON EventTickets
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @EventID INT;
+    SELECT @EventID = EventID FROM inserted;
 
--- ─── TABLE 2 : Events ────────────────────────────────
-CREATE TABLE Events (
-    EventID    INT          PRIMARY KEY IDENTITY(1,1),
-    EventName  VARCHAR(100) NOT NULL,
-    EventDate  DATE         NOT NULL,
-    Location   VARCHAR(200) NOT NULL,
-    TotalSeats INT          NOT NULL DEFAULT 100
-);
+    DECLARE @Total INT = (SELECT TotalSeats FROM Events WHERE EventID=@EventID);
+    DECLARE @Count INT = (SELECT COUNT(*) FROM EventTickets WHERE EventID=@EventID);
 
--- ─── TABLE 3 : Users ─────────────────────────────────
-CREATE TABLE Users (
-    UserID    INT          PRIMARY KEY IDENTITY(1,1),
-    UserName  VARCHAR(100) NOT NULL,
-    Email     VARCHAR(150),
-    Phone     VARCHAR(20),
-    CreatedAt DATETIME     DEFAULT GETDATE()
-);
+    IF @Count > @Total
+    BEGIN
+        RAISERROR('Event full!',16,1);
+        ROLLBACK TRANSACTION;
+    END
+END;
+GO
 
--- ─── TABLE 4 : EventTickets (FK → all three tables) ──
-CREATE TABLE EventTickets (
-    TicketID      INT         PRIMARY KEY IDENTITY(1001,1),
-    EventID       INT         NOT NULL,
-    UserID        INT         NOT NULL,
-    CategoryID    INT         NOT NULL,
-    SeatNo        VARCHAR(10) NOT NULL,
-    BookingDate   DATE        NOT NULL DEFAULT CAST(GETDATE() AS DATE),
-    PaymentStatus VARCHAR(20) NOT NULL DEFAULT 'Pending',
-    CONSTRAINT FK_Ticket_Event    FOREIGN KEY (EventID)    REFERENCES Events(EventID),
-    CONSTRAINT FK_Ticket_User     FOREIGN KEY (UserID)     REFERENCES Users(UserID),
-    CONSTRAINT FK_Ticket_Category FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
-);
+-- ═══════════════════════════════════════════════════════
+-- TRIGGER: WAITLIST AUTO MOVE
+-- ═══════════════════════════════════════════════════════
+GO
+CREATE TRIGGER trg_WaitlistAuto
+ON EventTickets
+AFTER DELETE
+AS
+BEGIN
+    DECLARE @EventID INT;
+    DECLARE @UserID INT;
+    DECLARE @CategoryID INT;
 
--- ─── SEED DATA ────────────────────────────────────────
+    SELECT @EventID = EventID FROM deleted;
 
-INSERT INTO Categories (CategoryName, Price) VALUES
-('VIP',     5000.00),
-('Regular', 3000.00),
-('Economy', 1500.00);
+    IF (SELECT COUNT(*) FROM EventTickets WHERE EventID=@EventID)
+       < (SELECT TotalSeats FROM Events WHERE EventID=@EventID)
+    BEGIN
+        SELECT TOP 1 @UserID=UserID,@CategoryID=CategoryID
+        FROM Waitlist
+        WHERE EventID=@EventID AND Status='Waiting'
+        ORDER BY WaitlistID;
 
-INSERT INTO Events (EventName, EventDate, Location, TotalSeats) VALUES
-('Rock Concert',          '2026-05-10', 'Lahore Arena',                   200),
-('Jazz Night',            '2026-05-20', 'Karachi Arts Centre',            150),
-('Tech Seminar',          '2026-06-01', 'Islamabad Convention Centre',    300),
-('Football Match',        '2026-06-15', 'National Stadium Karachi',       500),
-('Classical Symphony',    '2026-07-04', 'Alhamra Hall Lahore',            180);
+        IF @UserID IS NOT NULL
+        BEGIN
+            INSERT INTO EventTickets(EventID,UserID,CategoryID,SeatNo,PaymentStatus)
+            VALUES(@EventID,@UserID,@CategoryID,CONCAT('WL',@UserID),'Pending');
 
-INSERT INTO Users (UserName, Email, Phone) VALUES
-('Ali Khan',    'ali@example.com',   '0311-1234567'),
-('Sara Ahmed',  'sara@example.com',  '0321-7654321'),
-('Usman Ali',   'usman@example.com', '0333-9988776'),
-('Fatima Noor', 'fatima@example.com','0300-1122334');
-
-INSERT INTO EventTickets (EventID, UserID, CategoryID, SeatNo, BookingDate, PaymentStatus) VALUES
-(1, 1, 1, 'A1',  '2026-03-20', 'Paid'),
-(1, 2, 2, 'C3',  '2026-03-21', 'Pending'),
-(2, 3, 3, 'G5',  '2026-03-22', 'Paid'),
-(3, 4, 1, 'A2',  '2026-03-23', 'Paid'),
-(4, 1, 2, 'D7',  '2026-03-24', 'Pending');
-
--- ─── SAMPLE QUERIES (matches assignment PDF) ──────────
-
--- Q1: View all tickets with full details (JOIN across 4 tables)
-SELECT
-    t.TicketID,
-    e.EventName,
-    u.UserName,
-    c.CategoryName,
-    c.Price,
-    t.SeatNo,
-    t.BookingDate,
-    e.EventDate,
-    e.Location,
-    t.PaymentStatus
-FROM EventTickets t
-JOIN Events     e ON t.EventID    = e.EventID
-JOIN Users      u ON t.UserID     = u.UserID
-JOIN Categories c ON t.CategoryID = c.CategoryID
-ORDER BY t.TicketID;
-
--- Q2: Check booked seats for a specific event
-SELECT SeatNo
-FROM EventTickets t
-JOIN Events e ON t.EventID = e.EventID
-WHERE e.EventName = 'Rock Concert';
-
--- Q3: Filter Paid tickets only
-SELECT t.TicketID, e.EventName, u.UserName, t.PaymentStatus
-FROM EventTickets t
-JOIN Events e ON t.EventID = e.EventID
-JOIN Users  u ON t.UserID  = u.UserID
-WHERE t.PaymentStatus = 'Paid';
-
--- Q4: Update payment status
-UPDATE EventTickets
-SET PaymentStatus = 'Paid'
-WHERE TicketID = 1002;
-
--- Q5: Delete a ticket
-DELETE FROM EventTickets WHERE TicketID = 1005;
-
--- Q6: Sort tickets by price descending
-SELECT
-    t.TicketID,
-    e.EventName,
-    u.UserName,
-    c.CategoryName,
-    c.Price
-FROM EventTickets t
-JOIN Events     e ON t.EventID    = e.EventID
-JOIN Users      u ON t.UserID     = u.UserID
-JOIN Categories c ON t.CategoryID = c.CategoryID
-ORDER BY c.Price DESC;
-
--- Q7: Count tickets per event
-SELECT e.EventName, COUNT(t.TicketID) AS TotalBookings
-FROM Events e
-LEFT JOIN EventTickets t ON e.EventID = t.EventID
-GROUP BY e.EventName
-ORDER BY TotalBookings DESC;
-
--- Q8: Total revenue (paid only)
-SELECT SUM(c.Price) AS TotalRevenue
-FROM EventTickets t
-JOIN Categories c ON t.CategoryID = c.CategoryID
-WHERE t.PaymentStatus = 'Paid';
-
--- Q9: Seats remaining per event
-SELECT
-    e.EventName,
-    e.TotalSeats,
-    COUNT(t.TicketID)              AS BookedSeats,
-    e.TotalSeats - COUNT(t.TicketID) AS RemainingSeats
-FROM Events e
-LEFT JOIN EventTickets t ON e.EventID = t.EventID
-GROUP BY e.EventName, e.TotalSeats;
-
--- Q10: Users with more than one booking
-SELECT u.UserName, COUNT(t.TicketID) AS TotalBookings
-FROM Users u
-JOIN EventTickets t ON u.UserID = t.UserID
-GROUP BY u.UserName
-HAVING COUNT(t.TicketID) > 1;
+            UPDATE Waitlist
+            SET Status='Confirmed'
+            WHERE UserID=@UserID AND EventID=@EventID;
+        END
+    END
+END;
+GO

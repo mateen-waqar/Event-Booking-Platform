@@ -37,20 +37,20 @@ header{
   position:sticky;top:0;z-index:100;
   backdrop-filter:blur(20px);
 }
-.nav{display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;max-width:1400px;margin:auto}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;max-width:1600px;margin:auto}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:2px;
   background:linear-gradient(90deg,var(--accent),var(--accent2));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-tabs{display:flex;gap:4px;background:var(--surface);padding:4px;border-radius:10px;border:1px solid var(--border)}
-.tab-btn{background:none;border:none;color:var(--muted);padding:8px 18px;border-radius:7px;
-  cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;
+.nav-tabs{display:flex;gap:4px;background:var(--surface);padding:4px;border-radius:10px;border:1px solid var(--border);flex-wrap:wrap}
+.tab-btn{background:none;border:none;color:var(--muted);padding:7px 14px;border-radius:7px;
+  cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;
   transition:all .2s}
 .tab-btn.active{background:var(--accent);color:#fff}
 .tab-btn:hover:not(.active){color:var(--text);background:var(--border)}
 
 /* ─── HERO ──────────────────────────────────────────── */
 .hero{
-  text-align:center;padding:80px 2rem 60px;
+  text-align:center;padding:60px 2rem 40px;
   background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(255,77,0,.12),transparent);
   position:relative;overflow:hidden;
 }
@@ -58,22 +58,22 @@ header{
   content:'';position:absolute;inset:0;
   background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff4d00' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
-.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,7rem);
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,7vw,6rem);
   line-height:.95;letter-spacing:3px;position:relative}
 .hero-title span{color:var(--accent)}
-.hero-sub{color:var(--muted);font-size:1.1rem;margin-top:1rem;font-weight:300}
+.hero-sub{color:var(--muted);font-size:1.05rem;margin-top:1rem;font-weight:300}
 
 /* ─── STATS BAR ─────────────────────────────────────── */
-.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;
-  max-width:1000px;margin:2rem auto 0;padding:0 2rem}
+.stats-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;
+  max-width:1200px;margin:2rem auto 0;padding:0 2rem}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
   padding:1.2rem;text-align:center;transition:transform .2s}
 .stat-card:hover{transform:translateY(-3px)}
 .stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--accent);line-height:1}
-.stat-label{color:var(--muted);font-size:.78rem;margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.stat-label{color:var(--muted);font-size:.75rem;margin-top:4px;text-transform:uppercase;letter-spacing:1px}
 
 /* ─── MAIN CONTENT ──────────────────────────────────── */
-.main{max-width:1400px;margin:0 auto;padding:2rem}
+.main{max-width:1600px;margin:0 auto;padding:2rem}
 .page{display:none}.page.active{display:block}
 
 /* ─── SECTION HEADER ────────────────────────────────── */
@@ -99,7 +99,7 @@ header{
   padding:2rem;margin-bottom:2rem;box-shadow:var(--shadow)}
 .form-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px;
   margin-bottom:1.5rem;color:var(--text)}
-.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
 .form-group{display:flex;flex-direction:column;gap:6px}
 .form-group label{font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
 .form-group input,.form-group select{
@@ -115,20 +115,26 @@ header{
 .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
 .table-wrap table{width:100%;border-collapse:collapse}
 .table-wrap th{background:var(--surface);padding:12px 16px;text-align:left;
-  font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
-.table-wrap td{padding:12px 16px;border-top:1px solid var(--border);font-size:.88rem;vertical-align:middle}
+  font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.table-wrap td{padding:10px 16px;border-top:1px solid var(--border);font-size:.87rem;vertical-align:middle}
 .table-wrap tr:hover td{background:rgba(255,77,0,.04)}
 .ticket-id{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);font-weight:600}
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
 .badge-vip{background:rgba(245,197,24,.15);color:var(--gold)}
 .badge-regular{background:rgba(100,149,237,.15);color:#6495ed}
 .badge-economy{background:rgba(107,107,138,.2);color:var(--muted)}
 .badge-paid{background:rgba(0,230,118,.15);color:var(--green)}
 .badge-pending{background:rgba(255,193,7,.15);color:#ffc107}
+.badge-waiting{background:rgba(255,193,7,.15);color:#ffc107}
+.badge-confirmed{background:rgba(0,230,118,.15);color:var(--green)}
+.badge-cancelled{background:rgba(255,50,50,.15);color:#ff6b6b}
+.badge-refunded{background:rgba(100,149,237,.15);color:#6495ed}
+.badge-active{background:rgba(0,230,118,.15);color:var(--green)}
+.badge-inactive{background:rgba(107,107,138,.2);color:var(--muted)}
 .no-data{text-align:center;color:var(--muted);padding:3rem;font-size:.9rem}
 
 /* ─── EVENTS GRID ───────────────────────────────────── */
-.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.2rem}
+.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem}
 .event-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
   padding:1.5rem;transition:all .25s;cursor:pointer;position:relative;overflow:hidden}
 .event-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
@@ -170,6 +176,24 @@ header{
 .legend-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted)}
 .legend-dot{width:14px;height:14px;border-radius:3px}
 
+/* ─── CARDS GRID ─────────────────────────────────────── */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1rem}
+.info-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;position:relative}
+.info-card-head{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem}
+.info-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;flex-shrink:0}
+.info-name{font-weight:600;font-size:.95rem}
+.info-sub{font-size:.78rem;color:var(--muted);margin-top:2px}
+.info-row{font-size:.8rem;color:var(--muted);margin-top:4px;display:flex;align-items:center;gap:6px}
+.info-row em{color:var(--text);font-style:normal}
+.info-id{margin-top:.75rem;font-size:.72rem;color:var(--border);font-family:'JetBrains Mono',monospace;border-top:1px solid var(--border);padding-top:.6rem}
+.card-actions{margin-top:.75rem;display:flex;gap:6px;flex-wrap:wrap}
+
+/* ─── DISCOUNT CARD ─────────────────────────────────── */
+.discount-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem}
+.discount-code{font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:var(--gold);font-weight:700;margin-bottom:.4rem}
+.discount-pct{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--accent);line-height:1}
+
 /* ─── TOAST ─────────────────────────────────────────── */
 .toast{position:fixed;bottom:2rem;right:2rem;z-index:500;
   background:var(--card);border:1px solid var(--border);border-radius:12px;
@@ -179,14 +203,6 @@ header{
 .toast.success{border-left:4px solid var(--green)}
 .toast.error{border-left:4px solid #ff4444}
 
-/* ─── USERS TABLE ───────────────────────────────────── */
-.users-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
-.user-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem}
-.user-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));
-  display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.2rem;margin-bottom:.75rem}
-.user-name{font-weight:600;font-size:.95rem}
-.user-info{font-size:.8rem;color:var(--muted);margin-top:3px}
-
 /* ─── LOADING ────────────────────────────────────────── */
 .spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);
   border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
@@ -195,8 +211,16 @@ header{
 /* ─── PRICE BADGE ───────────────────────────────────── */
 .price-badge{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:600;color:var(--accent2)}
 
+/* ─── SECTION DIVIDER ───────────────────────────────── */
+.sub-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:1.5px;color:var(--muted);margin-bottom:1rem}
+
 /* ─── RESPONSIVE ─────────────────────────────────────── */
-@media(max-width:768px){
+@media(max-width:900px){
+  .stats-bar{grid-template-columns:repeat(3,1fr)}
+  .nav-tabs{gap:2px}
+  .tab-btn{padding:6px 10px;font-size:.72rem}
+}
+@media(max-width:600px){
   .stats-bar{grid-template-columns:repeat(2,1fr)}
   .nav-tabs{display:none}
   .form-grid{grid-template-columns:1fr}
@@ -211,10 +235,18 @@ header{
   <nav class="nav">
     <div class="logo">⬛ TicketVault</div>
     <div class="nav-tabs">
-      <button class="tab-btn active" onclick="showPage('book')">🎟 Book</button>
-      <button class="tab-btn" onclick="showPage('tickets')">📋 Tickets</button>
-      <button class="tab-btn" onclick="showPage('events')">🎭 Events</button>
-      <button class="tab-btn" onclick="showPage('users')">👤 Users</button>
+      <button class="tab-btn active"  onclick="showPage('book',this)">🎟 Book</button>
+      <button class="tab-btn"         onclick="showPage('tickets',this)">📋 Tickets</button>
+      <button class="tab-btn"         onclick="showPage('events',this)">🎭 Events</button>
+      <button class="tab-btn"         onclick="showPage('users',this)">👤 Users</button>
+      <button class="tab-btn"         onclick="showPage('venues',this)">🏟 Venues</button>
+      <button class="tab-btn"         onclick="showPage('organizers',this)">🏢 Organizers</button>
+      <button class="tab-btn"         onclick="showPage('staff',this)">👷 Staff</button>
+      <button class="tab-btn"         onclick="showPage('discounts',this)">🏷 Discounts</button>
+      <button class="tab-btn"         onclick="showPage('waitlist',this)">⏳ Waitlist</button>
+      <button class="tab-btn"         onclick="showPage('payments',this)">💳 Payments</button>
+      <button class="tab-btn"         onclick="showPage('cancellations',this)">❌ Cancel</button>
+      <button class="tab-btn"         onclick="showPage('categories',this)">🏷 Categories</button>
     </div>
   </nav>
 </header>
@@ -228,6 +260,7 @@ header{
     <div class="stat-card"><div class="stat-num" id="st-paid">—</div><div class="stat-label">Paid</div></div>
     <div class="stat-card"><div class="stat-num" id="st-revenue">—</div><div class="stat-label">Revenue (PKR)</div></div>
     <div class="stat-card"><div class="stat-num" id="st-events">—</div><div class="stat-label">Events</div></div>
+    <div class="stat-card"><div class="stat-num" id="st-waitlist">—</div><div class="stat-label">Waitlist</div></div>
   </div>
 </section>
 
@@ -243,8 +276,20 @@ header{
       <div class="form-title">Ticket Details</div>
       <div class="form-grid">
         <div class="form-group">
-          <label>Your Name *</label>
+          <label>Attendee Name *</label>
           <input id="b-name" placeholder="Full name" required/>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input id="b-email" type="email" placeholder="user@example.com"/>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input id="b-phone" placeholder="03xx-xxxxxxx"/>
+        </div>
+        <div class="form-group">
+          <label>CNIC *</label>
+          <input id="b-cnic" placeholder="xxxxx-xxxxxxx-x" maxlength="15"/>
         </div>
         <div class="form-group">
           <label>Event *</label>
@@ -263,6 +308,18 @@ header{
           <input id="b-price" readonly placeholder="Auto-filled" style="color:var(--accent2);font-family:'JetBrains Mono',monospace"/>
         </div>
         <div class="form-group">
+          <label>Discount Code (optional)</label>
+          <select id="b-discount">
+            <option value="">— No discount —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Processed by Staff (optional)</label>
+          <select id="b-staff">
+            <option value="">— Not assigned —</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label>Seat *</label>
           <div style="display:flex;gap:8px">
             <input id="b-seat" readonly placeholder="Select from seat map" style="flex:1"/>
@@ -271,7 +328,17 @@ header{
         </div>
         <div class="form-group">
           <label>Booking Date *</label>
-          <input id="b-bdate" type="date" value="2026-04-28"/>
+          <input id="b-bdate" type="date"/>
+        </div>
+        <div class="form-group">
+          <label>Payment Method *</label>
+          <select id="b-method">
+            <option value="Cash">💵 Cash</option>
+            <option value="Card">💳 Card</option>
+            <option value="Online">🌐 Online</option>
+            <option value="JazzCash">📱 JazzCash</option>
+            <option value="EasyPaisa">📱 EasyPaisa</option>
+          </select>
         </div>
         <div class="form-group">
           <label>Payment Status</label>
@@ -279,10 +346,6 @@ header{
             <option value="Pending">⏳ Pending</option>
             <option value="Paid">✅ Paid</option>
           </select>
-        </div>
-        <div class="form-group">
-          <label>Email (optional)</label>
-          <input id="b-email" type="email" placeholder="user@example.com"/>
         </div>
       </div>
       <div class="form-actions">
@@ -303,13 +366,13 @@ header{
         <thead>
           <tr>
             <th>Ticket ID</th><th>Event</th><th>Attendee</th>
-            <th>Category</th><th>Price</th><th>Seat</th>
-            <th>Booked</th><th>Event Date</th><th>Location</th>
-            <th>Status</th><th>Action</th>
+            <th>Category</th><th>Price</th><th>Discount</th><th>Seat</th>
+            <th>Booked</th><th>Event Date</th><th>Venue / City</th>
+            <th>Staff</th><th>Status</th><th>Action</th>
           </tr>
         </thead>
         <tbody id="tickets-body">
-          <tr><td colspan="11" class="no-data"><div class="spinner"></div></td></tr>
+          <tr><td colspan="13" class="no-data"><div class="spinner"></div></td></tr>
         </tbody>
       </table>
     </div>
@@ -328,16 +391,35 @@ header{
           <input id="e-name" placeholder="e.g. Rock Concert"/>
         </div>
         <div class="form-group">
+          <label>Event Type</label>
+          <select id="e-type">
+            <option value="Concert">Concert</option>
+            <option value="Sports">Sports</option>
+            <option value="Seminar">Seminar</option>
+            <option value="Theatre">Theatre</option>
+            <option value="Festival">Festival</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label>Event Date *</label>
           <input id="e-date" type="date"/>
         </div>
         <div class="form-group">
-          <label>Location *</label>
-          <input id="e-loc" placeholder="e.g. Lahore Arena"/>
+          <label>Venue *</label>
+          <select id="e-venue">
+            <option value="">— Select venue —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Organizer *</label>
+          <select id="e-org">
+            <option value="">— Select organizer —</option>
+          </select>
         </div>
         <div class="form-group">
           <label>Total Seats</label>
-          <input id="e-seats" type="number" value="100"/>
+          <input id="e-seats" type="number" value="100" min="1"/>
         </div>
       </div>
       <div class="form-actions">
@@ -354,10 +436,361 @@ header{
     <div class="section-header">
       <h2 class="section-title">REGISTERED <span>USERS</span></h2>
     </div>
-    <div class="users-grid" id="users-grid">
+    <div class="form-card">
+      <div class="form-title">Add New User</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input id="u-name" placeholder="Full name"/>
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input id="u-email" type="email" placeholder="user@example.com"/>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input id="u-phone" placeholder="03xx-xxxxxxx"/>
+        </div>
+        <div class="form-group">
+          <label>CNIC *</label>
+          <input id="u-cnic" placeholder="xxxxx-xxxxxxx-x" maxlength="15"/>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="addUser()">+ Add User</button>
+      </div>
+    </div>
+    <div class="cards-grid" id="users-grid">
       <div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>
     </div>
   </div>
+
+  <!-- ═══ VENUES PAGE ══════════════════════════ -->
+  <div id="page-venues" class="page">
+    <div class="section-header">
+      <h2 class="section-title">MANAGE <span>VENUES</span></h2>
+    </div>
+    <div class="form-card">
+      <div class="form-title">Add New Venue</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Venue Name *</label>
+          <input id="v-name" placeholder="e.g. Lahore Arena"/>
+        </div>
+        <div class="form-group">
+          <label>City *</label>
+          <input id="v-city" placeholder="e.g. Lahore"/>
+        </div>
+        <div class="form-group">
+          <label>Address *</label>
+          <input id="v-addr" placeholder="Full address"/>
+        </div>
+        <div class="form-group">
+          <label>Capacity *</label>
+          <input id="v-cap" type="number" placeholder="500" min="1"/>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="addVenue()">+ Add Venue</button>
+      </div>
+    </div>
+    <div class="cards-grid" id="venues-grid">
+      <div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ ORGANIZERS PAGE ══════════════════════ -->
+  <div id="page-organizers" class="page">
+    <div class="section-header">
+      <h2 class="section-title">MANAGE <span>ORGANIZERS</span></h2>
+    </div>
+    <div class="form-card">
+      <div class="form-title">Add New Organizer</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Name *</label>
+          <input id="o-name" placeholder="Organizer name"/>
+        </div>
+        <div class="form-group">
+          <label>Organization</label>
+          <input id="o-org" placeholder="Company / NGO name"/>
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input id="o-email" type="email" placeholder="contact@org.com"/>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input id="o-phone" placeholder="03xx-xxxxxxx"/>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="addOrganizer()">+ Add Organizer</button>
+      </div>
+    </div>
+    <div class="cards-grid" id="organizers-grid">
+      <div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ STAFF PAGE ═══════════════════════════ -->
+  <div id="page-staff" class="page">
+    <div class="section-header">
+      <h2 class="section-title">MANAGE <span>STAFF</span></h2>
+    </div>
+    <div class="form-card">
+      <div class="form-title">Add Staff Member</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Name *</label>
+          <input id="s-name" placeholder="Full name"/>
+        </div>
+        <div class="form-group">
+          <label>Role *</label>
+          <select id="s-role">
+            <option value="Ticket Agent">Ticket Agent</option>
+            <option value="Manager">Manager</option>
+            <option value="Security">Security</option>
+            <option value="Support">Support</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Shift Time</label>
+          <input id="s-shift" placeholder="e.g. 09:00–17:00"/>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input id="s-phone" placeholder="03xx-xxxxxxx"/>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input id="s-email" type="email" placeholder="staff@ticketvault.com"/>
+        </div>
+        <div class="form-group">
+          <label>Hire Date</label>
+          <input id="s-hire" type="date"/>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="addStaff()">+ Add Staff</button>
+      </div>
+    </div>
+    <div class="cards-grid" id="staff-grid">
+      <div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ DISCOUNTS PAGE ═══════════════════════ -->
+  <div id="page-discounts" class="page">
+    <div class="section-header">
+      <h2 class="section-title">MANAGE <span>DISCOUNTS</span></h2>
+    </div>
+    <div class="form-card">
+      <div class="form-title">Create Discount Code</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Code *</label>
+          <input id="d-code" placeholder="e.g. SAVE20" style="text-transform:uppercase"/>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input id="d-desc" placeholder="Brief description"/>
+        </div>
+        <div class="form-group">
+          <label>Percentage (%) *</label>
+          <input id="d-pct" type="number" placeholder="20" min="1" max="100"/>
+        </div>
+        <div class="form-group">
+          <label>Valid From *</label>
+          <input id="d-from" type="date"/>
+        </div>
+        <div class="form-group">
+          <label>Valid Until *</label>
+          <input id="d-until" type="date"/>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="d-active">
+            <option value="1">✅ Active</option>
+            <option value="0">❌ Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="addDiscount()">+ Create Discount</button>
+      </div>
+    </div>
+    <div class="cards-grid" id="discounts-grid">
+      <div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ WAITLIST PAGE ════════════════════════ -->
+  <div id="page-waitlist" class="page">
+    <div class="section-header">
+      <h2 class="section-title">MANAGE <span>WAITLIST</span></h2>
+    </div>
+    <div class="form-card">
+      <div class="form-title">Add to Waitlist</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>User *</label>
+          <select id="w-user">
+            <option value="">— Select user —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Event *</label>
+          <select id="w-event">
+            <option value="">— Select event —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <select id="w-cat">
+            <option value="">— Select category —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Request Date</label>
+          <input id="w-date" type="date"/>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="w-status">
+            <option value="Waiting">⏳ Waiting</option>
+            <option value="Confirmed">✅ Confirmed</option>
+            <option value="Cancelled">❌ Cancelled</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="addWaitlist()">+ Add to Waitlist</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>User</th><th>Event</th><th>Category</th>
+            <th>Request Date</th><th>Status</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="waitlist-body">
+          <tr><td colspan="7" class="no-data"><div class="spinner"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ PAYMENTS PAGE ════════════════════════ -->
+  <div id="page-payments" class="page">
+    <div class="section-header">
+      <h2 class="section-title">PAYMENT <span>RECORDS</span></h2>
+      <button class="btn btn-ghost btn-sm" onclick="loadPayments()">⟳ Refresh</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Payment ID</th><th>Ticket ID</th><th>Attendee</th>
+            <th>Amount (PKR)</th><th>Method</th><th>Transaction Date</th>
+            <th>Ref</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="payments-body">
+          <tr><td colspan="8" class="no-data"><div class="spinner"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ CANCELLATIONS PAGE ═══════════════════ -->
+  <div id="page-cancellations" class="page">
+    <div class="section-header">
+      <h2 class="section-title">CANCELLATION <span>RECORDS</span></h2>
+    </div>
+    <div class="form-card">
+      <div class="form-title">Process Cancellation</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Ticket ID *</label>
+          <input id="c-ticket" type="number" placeholder="e.g. 1001"/>
+        </div>
+        <div class="form-group">
+          <label>Reason</label>
+          <input id="c-reason" placeholder="Reason for cancellation"/>
+        </div>
+        <div class="form-group">
+          <label>Cancel Date</label>
+          <input id="c-date" type="date"/>
+        </div>
+        <div class="form-group">
+          <label>Refund Status</label>
+          <select id="c-refund">
+            <option value="Pending">⏳ Pending</option>
+            <option value="Refunded">✅ Refunded</option>
+            <option value="Denied">❌ Denied</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Refund Amount (PKR)</label>
+          <input id="c-amount" type="number" placeholder="0.00" min="0"/>
+        </div>
+        <div class="form-group">
+          <label>Processed by Staff</label>
+          <select id="c-staff">
+            <option value="">— Select staff —</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-danger" onclick="addCancellation()">❌ Process Cancellation</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Cancel ID</th><th>Ticket ID</th><th>Attendee</th><th>Event</th>
+            <th>Reason</th><th>Cancel Date</th><th>Refund Status</th>
+            <th>Refund Amount</th><th>Processed By</th>
+          </tr>
+        </thead>
+        <tbody id="cancellations-body">
+          <tr><td colspan="9" class="no-data"><div class="spinner"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ CATEGORIES PAGE ══════════════════════ -->
+  <div id="page-categories" class="page">
+    <div class="section-header">
+      <h2 class="section-title">TICKET <span>CATEGORIES</span></h2>
+    </div>
+    <div class="form-card">
+      <div class="form-title">Add / Update Category</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Category Name *</label>
+          <input id="cat-name" placeholder="e.g. VIP, Regular, Economy"/>
+        </div>
+        <div class="form-group">
+          <label>Price (PKR) *</label>
+          <input id="cat-price" type="number" placeholder="e.g. 5000" min="0" step="0.01"/>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="addCategory()">+ Add Category</button>
+      </div>
+    </div>
+    <div class="cards-grid" id="categories-grid">
+      <div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>
+    </div>
+  </div>
+
 
 </main>
 
@@ -391,17 +824,29 @@ header{
 
 <script>
 const API = 'http://localhost:5000/api';
-let categories = [], events = [], selectedSeat = null, bookedSeats = [];
+let categories = [], events = [], users = [], staff = [], discounts = [];
+let selectedSeat = null, bookedSeats = [];
 
 // ── PAGE SWITCHING ────────────────────────────────
-function showPage(name) {
+function showPage(name, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
-  event.target.classList.add('active');
-  if (name === 'tickets') loadTickets();
-  if (name === 'events') loadEvents();
-  if (name === 'users') loadUsers();
+  if (btn) btn.classList.add('active');
+  const loaders = {
+    tickets: loadTickets,
+    events: loadEvents,
+    users: loadUsers,
+    venues: loadVenues,
+    organizers: loadOrganizers,
+    staff: loadStaff,
+    discounts: loadDiscounts,
+    waitlist: loadWaitlist,
+    payments: loadPayments,
+    cancellations: loadCancellations,
+    categories: loadCategories,
+  };
+  if (loaders[name]) loaders[name]();
 }
 
 // ── TOAST ─────────────────────────────────────────
@@ -411,35 +856,116 @@ function toast(msg, type = 'success') {
   setTimeout(() => t.classList.remove('show'), 3500);
 }
 
+// ── API HELPER ────────────────────────────────────
+async function api(path, opts) {
+  const r = await fetch(API + path, opts);
+  const d = await r.json().catch(() => ({}));
+  return { ok: r.ok, status: r.status, data: d };
+}
+
 // ── STATS ─────────────────────────────────────────
 async function loadStats() {
   try {
     const r = await fetch(API + '/stats');
     const d = await r.json();
-    document.getElementById('st-total').textContent = d.total;
-    document.getElementById('st-paid').textContent = d.paid;
-    document.getElementById('st-revenue').textContent = (d.revenue / 1000).toFixed(1) + 'K';
-    document.getElementById('st-events').textContent = d.events;
+    document.getElementById('st-total').textContent = d.total ?? '—';
+    document.getElementById('st-paid').textContent = d.paid ?? '—';
+    document.getElementById('st-revenue').textContent = d.revenue ? (d.revenue / 1000).toFixed(1) + 'K' : '0';
+    document.getElementById('st-events').textContent = d.events ?? '—';
+    document.getElementById('st-waitlist').textContent = d.waitlist ?? '—';
+    if (d.categories !== undefined) document.getElementById('st-categories') && (document.getElementById('st-categories').textContent = d.categories);
   } catch { }
 }
 
 // ── DROPDOWNS ─────────────────────────────────────
 async function loadDropdowns() {
-  const [cr, er] = await Promise.all([fetch(API + '/categories'), fetch(API + '/events')]);
-  categories = await cr.json();
-  events = await er.json();
+  try {
+    const [cr, er, ur, sr, dr] = await Promise.all([
+      fetch(API + '/categories'),
+      fetch(API + '/events'),
+      fetch(API + '/users'),
+      fetch(API + '/staff'),
+      fetch(API + '/discounts'),
+    ]);
+    categories = await cr.json().catch(() => []);
+    events     = await er.json().catch(() => []);
+    users      = await ur.json().catch(() => []);
+    staff      = await sr.json().catch(() => []);
+    discounts  = await dr.json().catch(() => []);
 
-  const cSel = document.getElementById('b-cat');
-  categories.forEach(c => {
+    // Categories
+    const cSel = document.getElementById('b-cat');
+    categories.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.id; o.textContent = `${c.name} — PKR ${Number(c.price).toLocaleString()}`;
+      o.dataset.price = c.price; cSel.appendChild(o);
+    });
+
+    // Events (booking + waitlist)
+    ['b-event', 'w-event'].forEach(id => {
+      const sel = document.getElementById(id);
+      events.forEach(e => {
+        const o = document.createElement('option');
+        o.value = e.id; o.textContent = e.name; sel.appendChild(o);
+      });
+    });
+
+    // Categories for waitlist
+    const wCat = document.getElementById('w-cat');
+    categories.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.id; o.textContent = c.name; wCat.appendChild(o);
+    });
+
+    // Staff (booking + cancellation)
+    ['b-staff', 'c-staff'].forEach(id => {
+      const sel = document.getElementById(id);
+      staff.forEach(s => {
+        const o = document.createElement('option');
+        o.value = s.id; o.textContent = `${s.name} (${s.role})`; sel.appendChild(o);
+      });
+    });
+
+    // Discounts
+    const dSel = document.getElementById('b-discount');
+    discounts.filter(d => d.isActive).forEach(d => {
+      const o = document.createElement('option');
+      o.value = d.id; o.textContent = `${d.code} — ${d.percentage}% off`; dSel.appendChild(o);
+    });
+
+    // Users for waitlist
+    const wUser = document.getElementById('w-user');
+    users.forEach(u => {
+      const o = document.createElement('option');
+      o.value = u.id; o.textContent = `${u.name} (UID-${u.id})`; wUser.appendChild(o);
+    });
+
+    // Venues + Organizers for event form
+    await refreshVenueOrgDropdowns();
+
+  } catch(e) { console.error(e); }
+}
+
+async function refreshVenueOrgDropdowns() {
+  const [vr, or] = await Promise.all([
+    fetch(API + '/venues').catch(() => ({ json: () => [] })),
+    fetch(API + '/organizers').catch(() => ({ json: () => [] })),
+  ]);
+  const venues = await vr.json().catch(() => []);
+  const orgs   = await or.json().catch(() => []);
+
+  const vSel = document.getElementById('e-venue');
+  vSel.innerHTML = '<option value="">— Select venue —</option>';
+  venues.forEach(v => {
     const o = document.createElement('option');
-    o.value = c.id; o.textContent = `${c.name} — PKR ${c.price.toLocaleString()}`;
-    o.dataset.price = c.price; cSel.appendChild(o);
+    o.value = v.id; o.textContent = `${v.name}, ${v.city}`; vSel.appendChild(o);
   });
 
-  const eSel = document.getElementById('b-event');
-  events.forEach(e => {
-    const o = document.createElement('option');
-    o.value = e.id; o.textContent = e.name; eSel.appendChild(o);
+  const oSel = document.getElementById('e-org');
+  oSel.innerHTML = '<option value="">— Select organizer —</option>';
+  orgs.forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o.id; opt.textContent = o.name; oSel.appendChild(opt);
   });
 }
 
@@ -452,10 +978,8 @@ function onCatChange() {
 
 function onEventChange() {
   document.getElementById('b-seat').value = '';
-  selectedSeat = null;
-  bookedSeats = [];
-  const hasEvent = document.getElementById('b-event').value;
-  document.getElementById('seat-map-btn').disabled = !hasEvent;
+  selectedSeat = null; bookedSeats = [];
+  document.getElementById('seat-map-btn').disabled = !document.getElementById('b-event').value;
 }
 
 // ── SEAT MAP ──────────────────────────────────────
@@ -464,10 +988,8 @@ async function openSeatMap() {
   if (!eid) return;
   const ev = events.find(e => e.id == eid);
   document.getElementById('modal-event-name').textContent = ev?.name || 'Select Seat';
-
   const r = await fetch(API + '/tickets/booked-seats/' + eid);
-  bookedSeats = await r.json();
-
+  bookedSeats = await r.json().catch(() => []);
   buildSeatMap();
   document.getElementById('seat-modal').classList.add('open');
 }
@@ -478,12 +1000,10 @@ function buildSeatMap() {
     { name: 'REGULAR SECTION', rows: ['C', 'D', 'E', 'F'], cols: 14, cat: 'Regular', price: '' },
     { name: 'ECONOMY SECTION', rows: ['G', 'H', 'I', 'J'], cols: 16, cat: 'Economy', price: '' },
   ];
-  // inject prices
   categories.forEach(c => {
     const s = sections.find(s => s.cat === c.name);
-    if (s) s.price = `PKR ${c.price.toLocaleString()} / SEAT`;
+    if (s) s.price = `PKR ${Number(c.price).toLocaleString()} / SEAT`;
   });
-
   let html = '';
   sections.forEach(sec => {
     html += `<div class="seat-section">
@@ -494,9 +1014,9 @@ function buildSeatMap() {
         const seatId = `${row}${c}`;
         const isBooked = bookedSeats.includes(seatId);
         const isSel = selectedSeat === seatId;
-        html += `<button class="seat${isBooked ? ' booked' : ''}${isSel ? ' selected' : ''}"
+        html += `<button class="seat${isBooked?' booked':''}${isSel?' selected':''}"
           onclick="selectSeat('${seatId}',this)"
-          ${isBooked ? 'disabled' : ''}>${c}</button>`;
+          ${isBooked?'disabled':''}>${c}</button>`;
       }
       html += `</div>`;
     });
@@ -507,29 +1027,29 @@ function buildSeatMap() {
 
 function selectSeat(id, btn) {
   document.querySelectorAll('.seat.selected').forEach(s => s.classList.remove('selected'));
-  selectedSeat = id;
-  btn.classList.add('selected');
+  selectedSeat = id; btn.classList.add('selected');
 }
-
 function confirmSeat() {
   if (!selectedSeat) { toast('Please select a seat first', 'error'); return; }
   document.getElementById('b-seat').value = selectedSeat;
   closeSeatMap();
 }
-
-function closeSeatMap() {
-  document.getElementById('seat-modal').classList.remove('open');
-}
+function closeSeatMap() { document.getElementById('seat-modal').classList.remove('open'); }
 
 // ── BOOK TICKET ───────────────────────────────────
 async function bookTicket() {
-  const name = document.getElementById('b-name').value.trim();
-  const eid  = document.getElementById('b-event').value;
-  const cid  = document.getElementById('b-cat').value;
-  const seat = document.getElementById('b-seat').value.trim();
-  const bdate= document.getElementById('b-bdate').value;
-  const pay  = document.getElementById('b-pay').value;
-  const email= document.getElementById('b-email').value.trim();
+  const name   = document.getElementById('b-name').value.trim();
+  const email  = document.getElementById('b-email').value.trim();
+  const phone  = document.getElementById('b-phone').value.trim();
+  const cnic   = document.getElementById('b-cnic').value.trim();
+  const eid    = document.getElementById('b-event').value;
+  const cid    = document.getElementById('b-cat').value;
+  const seat   = document.getElementById('b-seat').value.trim();
+  const bdate  = document.getElementById('b-bdate').value;
+  const pay    = document.getElementById('b-pay').value;
+  const method = document.getElementById('b-method').value;
+  const staffId= document.getElementById('b-staff').value;
+  const discId = document.getElementById('b-discount').value;
 
   if (!name || !eid || !cid || !seat) {
     toast('Please fill all required fields and select a seat', 'error'); return;
@@ -539,23 +1059,32 @@ async function bookTicket() {
     const r = await fetch(API + '/tickets', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userName: name, eventId: +eid, categoryId: +cid,
-        seatNo: seat, bookingDate: bdate, paymentStatus: pay, email })
+      body: JSON.stringify({
+        userName: name, email, phone, cnic,
+        eventId: +eid, categoryId: +cid,
+        seatNo: seat, bookingDate: bdate, paymentStatus: pay,
+        paymentMethod: method,
+        staffId: staffId ? +staffId : null,
+        discountId: discId ? +discId : null
+      })
     });
     const d = await r.json();
     if (!r.ok) { toast(d.error || 'Booking failed', 'error'); return; }
     toast(`✅ Seat ${seat} booked successfully!`);
-    resetBookForm();
-    loadStats();
+    resetBookForm(); loadStats();
   } catch { toast('Connection error — is server.py running?', 'error'); }
 }
 
 function resetBookForm() {
-  ['b-name','b-email','b-seat','b-price'].forEach(id => document.getElementById(id).value = '');
+  ['b-name','b-email','b-phone','b-cnic','b-seat','b-price'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('b-event').selectedIndex = 0;
   document.getElementById('b-cat').selectedIndex = 0;
   document.getElementById('b-pay').selectedIndex = 0;
-  document.getElementById('b-bdate').value = '2026-04-28';
+  document.getElementById('b-method').selectedIndex = 0;
+  document.getElementById('b-staff').selectedIndex = 0;
+  document.getElementById('b-discount').selectedIndex = 0;
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('b-bdate').value = today;
   selectedSeat = null;
   document.getElementById('seat-map-btn').disabled = true;
 }
@@ -563,32 +1092,34 @@ function resetBookForm() {
 // ── TICKETS TABLE ─────────────────────────────────
 async function loadTickets() {
   const tbody = document.getElementById('tickets-body');
-  tbody.innerHTML = '<tr><td colspan="11" class="no-data"><div class="spinner"></div></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="13" class="no-data"><div class="spinner"></div></td></tr>';
   try {
     const r = await fetch(API + '/tickets');
     const tickets = await r.json();
     if (!tickets.length) {
-      tbody.innerHTML = '<tr><td colspan="11" class="no-data">No tickets booked yet.</td></tr>'; return;
+      tbody.innerHTML = '<tr><td colspan="13" class="no-data">No tickets booked yet.</td></tr>'; return;
     }
     tbody.innerHTML = tickets.map(t => `
       <tr>
         <td><span class="ticket-id">TKT-${t.ticketId}</span></td>
         <td>${t.event}</td>
         <td>${t.user}</td>
-        <td><span class="badge badge-${t.category.toLowerCase()}">${t.category}</span></td>
+        <td><span class="badge badge-${(t.category||'').toLowerCase()}">${t.category}</span></td>
         <td><span class="price-badge">PKR ${Number(t.price).toLocaleString()}</span></td>
+        <td>${t.discount ? `<span class="badge badge-vip">${t.discount}</span>` : '<span style="color:var(--muted)">—</span>'}</td>
         <td><code style="font-family:'JetBrains Mono',monospace;font-size:.8rem">${t.seat}</code></td>
         <td>${t.booked}</td>
         <td>${t.eventDate}</td>
-        <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.location}</td>
-        <td><span class="badge badge-${t.status.toLowerCase()}">${t.status}</span></td>
+        <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.location || '—'}</td>
+        <td>${t.staff || '<span style="color:var(--muted)">—</span>'}</td>
+        <td><span class="badge badge-${(t.status||'').toLowerCase()}">${t.status}</span></td>
         <td style="display:flex;gap:6px;flex-wrap:wrap">
           ${t.status !== 'Paid' ? `<button class="btn btn-success btn-sm" onclick="markPaid(${t.ticketId})">✔ Paid</button>` : ''}
           <button class="btn btn-danger btn-sm" onclick="deleteTicket(${t.ticketId})">🗑</button>
         </td>
       </tr>`).join('');
   } catch {
-    tbody.innerHTML = '<tr><td colspan="11" class="no-data">⚠️ Cannot reach server. Is server.py running?</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="13" class="no-data">⚠️ Cannot reach server. Is server.py running?</td></tr>';
   }
 }
 
@@ -609,21 +1140,25 @@ async function deleteTicket(id) {
 // ── EVENTS ────────────────────────────────────────
 async function loadEvents() {
   const grid = document.getElementById('events-grid');
-  grid.innerHTML = '<div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>';
+  grid.innerHTML = '<div style="color:var(--muted);padding:2rem;grid-column:1/-1"><div class="spinner"></div></div>';
   try {
     const r = await fetch(API + '/events');
     const evs = await r.json();
+    if (!evs.length) { grid.innerHTML = '<div style="color:var(--muted);padding:2rem">No events yet.</div>'; return; }
     grid.innerHTML = evs.map(e => `
       <div class="event-card">
         <div class="event-name">${e.name}</div>
         <div class="event-meta">
           <span>📅 <em>${e.date}</em></span>
-          <span>📍 <em>${e.location}</em></span>
+          <span>🏟 <em>${e.venue || e.location || '—'}</em></span>
+          <span>📍 <em>${e.city || '—'}</em></span>
+          <span>🎭 <em>${e.eventType || '—'}</em></span>
+          <span>🏢 <em>${e.organizer || '—'}</em></span>
           <span>💺 <em>${e.seats} seats</em></span>
         </div>
         <div class="event-footer">
           <span style="font-size:.78rem;color:var(--muted)">ID: ${e.id}</span>
-          <button class="btn btn-danger btn-sm" onclick="deleteEvent(${e.id},'${e.name}')">🗑 Remove</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteEvent(${e.id},'${e.name.replace(/'/g,'\\')}')">🗑 Remove</button>
         </div>
       </div>`).join('');
   } catch { grid.innerHTML = '<div style="color:var(--muted)">⚠️ Cannot reach server.</div>'; }
@@ -631,26 +1166,33 @@ async function loadEvents() {
 
 async function addEvent() {
   const name  = document.getElementById('e-name').value.trim();
+  const type  = document.getElementById('e-type').value;
   const date  = document.getElementById('e-date').value;
-  const loc   = document.getElementById('e-loc').value.trim();
+  const vid   = document.getElementById('e-venue').value;
+  const oid   = document.getElementById('e-org').value;
   const seats = document.getElementById('e-seats').value;
-  if (!name || !date || !loc) { toast('Fill all required fields', 'error'); return; }
-  await fetch(API + '/events', {
+  if (!name || !date) { toast('Fill all required fields', 'error'); return; }
+  const r = await fetch(API + '/events', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ eventName: name, eventDate: date, location: loc, totalSeats: +seats })
+    body: JSON.stringify({ eventName: name, eventType: type, eventDate: date,
+      venueId: vid ? +vid : null, organizerId: oid ? +oid : null, totalSeats: +seats })
   });
+  if (!r.ok) { toast('Failed to add event', 'error'); return; }
   toast('Event added ✅');
-  ['e-name','e-date','e-loc'].forEach(id => document.getElementById(id).value = '');
+  ['e-name','e-date'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('e-seats').value = 100;
   loadEvents();
-  // refresh dropdowns
+  // refresh book dropdown
   document.getElementById('b-event').innerHTML = '<option value="">— Select event —</option>';
-  const r = await fetch(API + '/events');
-  events = await r.json();
-  events.forEach(e => {
-    const o = document.createElement('option');
-    o.value = e.id; o.textContent = e.name;
-    document.getElementById('b-event').appendChild(o);
+  document.getElementById('w-event').innerHTML = '<option value="">— Select event —</option>';
+  const er = await fetch(API + '/events');
+  events = await er.json().catch(() => []);
+  ['b-event','w-event'].forEach(selId => {
+    const sel = document.getElementById(selId);
+    events.forEach(e => {
+      const o = document.createElement('option');
+      o.value = e.id; o.textContent = e.name; sel.appendChild(o);
+    });
   });
 }
 
@@ -666,20 +1208,436 @@ async function loadUsers() {
   grid.innerHTML = '<div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>';
   try {
     const r = await fetch(API + '/users');
-    const users = await r.json();
-    if (!users.length) { grid.innerHTML = '<p style="color:var(--muted)">No users registered yet.</p>'; return; }
-    grid.innerHTML = users.map(u => `
-      <div class="user-card">
-        <div class="user-avatar">${u.name.charAt(0).toUpperCase()}</div>
-        <div class="user-name">${u.name}</div>
-        <div class="user-info">${u.email || '—'}</div>
-        <div class="user-info">${u.phone || '—'}</div>
-        <div style="margin-top:.5rem;font-size:.75rem;color:var(--border);font-family:'JetBrains Mono',monospace">UID-${u.id}</div>
+    const us = await r.json();
+    if (!us.length) { grid.innerHTML = '<p style="color:var(--muted)">No users registered yet.</p>'; return; }
+    grid.innerHTML = us.map(u => `
+      <div class="info-card">
+        <div class="info-card-head">
+          <div class="info-avatar">${u.name.charAt(0).toUpperCase()}</div>
+          <div><div class="info-name">${u.name}</div><div class="info-sub">${u.email || '—'}</div></div>
+        </div>
+        <div class="info-row">📞 <em>${u.phone || '—'}</em></div>
+        <div class="info-row">🪪 <em style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${u.cnic || '—'}</em></div>
+        <div class="info-id">UID-${u.id} &nbsp;·&nbsp; Joined ${u.createdAt || '—'}</div>
       </div>`).join('');
   } catch { grid.innerHTML = '<div style="color:var(--muted)">⚠️ Cannot reach server.</div>'; }
 }
 
+async function addUser() {
+  const name  = document.getElementById('u-name').value.trim();
+  const email = document.getElementById('u-email').value.trim();
+  const phone = document.getElementById('u-phone').value.trim();
+  const cnic  = document.getElementById('u-cnic').value.trim();
+  if (!name || !email) { toast('Name and email required', 'error'); return; }
+  const r = await fetch(API + '/users', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userName: name, email, phone, cnic })
+  });
+  if (!r.ok) { const d = await r.json(); toast(d.error || 'Failed', 'error'); return; }
+  toast('User added ✅');
+  ['u-name','u-email','u-phone','u-cnic'].forEach(id => document.getElementById(id).value = '');
+  loadUsers();
+  // refresh user dropdown
+  document.getElementById('w-user').innerHTML = '<option value="">— Select user —</option>';
+  const ur = await fetch(API + '/users');
+  users = await ur.json().catch(() => []);
+  users.forEach(u => {
+    const o = document.createElement('option');
+    o.value = u.id; o.textContent = `${u.name} (UID-${u.id})`;
+    document.getElementById('w-user').appendChild(o);
+  });
+}
+
+// ── VENUES ────────────────────────────────────────
+async function loadVenues() {
+  const grid = document.getElementById('venues-grid');
+  grid.innerHTML = '<div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>';
+  try {
+    const r = await fetch(API + '/venues');
+    const vs = await r.json();
+    if (!vs.length) { grid.innerHTML = '<p style="color:var(--muted)">No venues yet.</p>'; return; }
+    grid.innerHTML = vs.map(v => `
+      <div class="info-card">
+        <div class="info-card-head">
+          <div class="info-avatar" style="background:linear-gradient(135deg,#1e3a5f,#2196f3)">🏟</div>
+          <div><div class="info-name">${v.name}</div><div class="info-sub">${v.city}</div></div>
+        </div>
+        <div class="info-row">📍 <em>${v.address || '—'}</em></div>
+        <div class="info-row">💺 <em>Capacity: ${v.capacity ? Number(v.capacity).toLocaleString() : '—'}</em></div>
+        <div class="info-id">VID-${v.id}</div>
+        <div class="card-actions">
+          <button class="btn btn-danger btn-sm" onclick="deleteVenue(${v.id})">🗑 Remove</button>
+        </div>
+      </div>`).join('');
+  } catch { grid.innerHTML = '<div style="color:var(--muted)">⚠️ Cannot reach server.</div>'; }
+}
+
+async function addVenue() {
+  const name = document.getElementById('v-name').value.trim();
+  const city = document.getElementById('v-city').value.trim();
+  const addr = document.getElementById('v-addr').value.trim();
+  const cap  = document.getElementById('v-cap').value;
+  if (!name || !city || !cap) { toast('Fill required fields', 'error'); return; }
+  const r = await fetch(API + '/venues', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ venueName: name, city, address: addr, capacity: +cap })
+  });
+  if (!r.ok) { toast('Failed to add venue', 'error'); return; }
+  toast('Venue added ✅');
+  ['v-name','v-city','v-addr','v-cap'].forEach(id => document.getElementById(id).value = '');
+  loadVenues(); refreshVenueOrgDropdowns();
+}
+
+async function deleteVenue(id) {
+  if (!confirm('Delete venue?')) return;
+  await fetch(API + '/venues/' + id, { method: 'DELETE' });
+  toast('Venue removed'); loadVenues(); refreshVenueOrgDropdowns();
+}
+
+// ── ORGANIZERS ────────────────────────────────────
+async function loadOrganizers() {
+  const grid = document.getElementById('organizers-grid');
+  grid.innerHTML = '<div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>';
+  try {
+    const r = await fetch(API + '/organizers');
+    const os = await r.json();
+    if (!os.length) { grid.innerHTML = '<p style="color:var(--muted)">No organizers yet.</p>'; return; }
+    grid.innerHTML = os.map(o => `
+      <div class="info-card">
+        <div class="info-card-head">
+          <div class="info-avatar" style="background:linear-gradient(135deg,#4a1060,#9c27b0)">${o.name.charAt(0)}</div>
+          <div><div class="info-name">${o.name}</div><div class="info-sub">${o.organization || '—'}</div></div>
+        </div>
+        <div class="info-row">📧 <em>${o.email || '—'}</em></div>
+        <div class="info-row">📞 <em>${o.phone || '—'}</em></div>
+        <div class="info-id">OID-${o.id}</div>
+        <div class="card-actions">
+          <button class="btn btn-danger btn-sm" onclick="deleteOrganizer(${o.id})">🗑 Remove</button>
+        </div>
+      </div>`).join('');
+  } catch { grid.innerHTML = '<div style="color:var(--muted)">⚠️ Cannot reach server.</div>'; }
+}
+
+async function addOrganizer() {
+  const name = document.getElementById('o-name').value.trim();
+  const org  = document.getElementById('o-org').value.trim();
+  const email= document.getElementById('o-email').value.trim();
+  const phone= document.getElementById('o-phone').value.trim();
+  if (!name || !email) { toast('Name and email required', 'error'); return; }
+  const r = await fetch(API + '/organizers', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ organizerName: name, organization: org, contactEmail: email, phone })
+  });
+  if (!r.ok) { toast('Failed to add organizer', 'error'); return; }
+  toast('Organizer added ✅');
+  ['o-name','o-org','o-email','o-phone'].forEach(id => document.getElementById(id).value = '');
+  loadOrganizers(); refreshVenueOrgDropdowns();
+}
+
+async function deleteOrganizer(id) {
+  if (!confirm('Delete organizer?')) return;
+  await fetch(API + '/organizers/' + id, { method: 'DELETE' });
+  toast('Organizer removed'); loadOrganizers(); refreshVenueOrgDropdowns();
+}
+
+// ── STAFF ─────────────────────────────────────────
+async function loadStaff() {
+  const grid = document.getElementById('staff-grid');
+  grid.innerHTML = '<div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>';
+  try {
+    const r = await fetch(API + '/staff');
+    const ss = await r.json();
+    if (!ss.length) { grid.innerHTML = '<p style="color:var(--muted)">No staff members yet.</p>'; return; }
+    grid.innerHTML = ss.map(s => `
+      <div class="info-card">
+        <div class="info-card-head">
+          <div class="info-avatar" style="background:linear-gradient(135deg,#1a4731,#00e676)">${s.name.charAt(0)}</div>
+          <div><div class="info-name">${s.name}</div><div class="info-sub">${s.role}</div></div>
+        </div>
+        <div class="info-row">⏰ <em>${s.shiftTime || '—'}</em></div>
+        <div class="info-row">📞 <em>${s.phone || '—'}</em></div>
+        <div class="info-row">📧 <em>${s.email || '—'}</em></div>
+        <div class="info-row">📅 <em>Hired: ${s.hireDate || '—'}</em></div>
+        <div class="info-id">SID-${s.id}</div>
+        <div class="card-actions">
+          <button class="btn btn-danger btn-sm" onclick="deleteStaff(${s.id})">🗑 Remove</button>
+        </div>
+      </div>`).join('');
+  } catch { grid.innerHTML = '<div style="color:var(--muted)">⚠️ Cannot reach server.</div>'; }
+}
+
+async function addStaff() {
+  const name  = document.getElementById('s-name').value.trim();
+  const role  = document.getElementById('s-role').value;
+  const shift = document.getElementById('s-shift').value.trim();
+  const phone = document.getElementById('s-phone').value.trim();
+  const email = document.getElementById('s-email').value.trim();
+  const hire  = document.getElementById('s-hire').value;
+  if (!name) { toast('Name required', 'error'); return; }
+  const r = await fetch(API + '/staff', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ staffName: name, role, shiftTime: shift, phone, email, hireDate: hire })
+  });
+  if (!r.ok) { toast('Failed to add staff', 'error'); return; }
+  toast('Staff member added ✅');
+  ['s-name','s-shift','s-phone','s-email','s-hire'].forEach(id => document.getElementById(id).value = '');
+  loadStaff();
+  // refresh staff dropdowns
+  document.getElementById('b-staff').innerHTML = '<option value="">— Not assigned —</option>';
+  document.getElementById('c-staff').innerHTML = '<option value="">— Select staff —</option>';
+  const sr = await fetch(API + '/staff');
+  staff = await sr.json().catch(() => []);
+  ['b-staff','c-staff'].forEach(selId => {
+    const sel = document.getElementById(selId);
+    staff.forEach(s => {
+      const o = document.createElement('option');
+      o.value = s.id; o.textContent = `${s.name} (${s.role})`; sel.appendChild(o);
+    });
+  });
+}
+
+async function deleteStaff(id) {
+  if (!confirm('Remove staff member?')) return;
+  await fetch(API + '/staff/' + id, { method: 'DELETE' });
+  toast('Staff removed'); loadStaff();
+}
+
+// ── DISCOUNTS ─────────────────────────────────────
+async function loadDiscounts() {
+  const grid = document.getElementById('discounts-grid');
+  grid.innerHTML = '<div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>';
+  try {
+    const r = await fetch(API + '/discounts');
+    const ds = await r.json();
+    if (!ds.length) { grid.innerHTML = '<p style="color:var(--muted)">No discount codes yet.</p>'; return; }
+    grid.innerHTML = ds.map(d => `
+      <div class="discount-card">
+        <div class="discount-code">${d.code}</div>
+        <div class="discount-pct">${d.percentage}% OFF</div>
+        <div style="font-size:.82rem;color:var(--muted);margin:.5rem 0">${d.description || '—'}</div>
+        <div class="info-row">📅 <em>${d.validFrom} → ${d.validUntil}</em></div>
+        <div style="margin-top:.5rem">
+          <span class="badge badge-${d.isActive ? 'active' : 'inactive'}">${d.isActive ? '✅ Active' : '❌ Inactive'}</span>
+        </div>
+        <div class="info-id">DID-${d.id}</div>
+        <div class="card-actions">
+          <button class="btn btn-danger btn-sm" onclick="deleteDiscount(${d.id})">🗑 Remove</button>
+        </div>
+      </div>`).join('');
+  } catch { grid.innerHTML = '<div style="color:var(--muted)">⚠️ Cannot reach server.</div>'; }
+}
+
+async function addDiscount() {
+  const code  = document.getElementById('d-code').value.trim().toUpperCase();
+  const desc  = document.getElementById('d-desc').value.trim();
+  const pct   = document.getElementById('d-pct').value;
+  const from  = document.getElementById('d-from').value;
+  const until = document.getElementById('d-until').value;
+  const active= document.getElementById('d-active').value;
+  if (!code || !pct || !from || !until) { toast('Fill all required fields', 'error'); return; }
+  if (until < from) { toast('Valid Until must be after Valid From', 'error'); return; }
+  const r = await fetch(API + '/discounts', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code, description: desc, percentage: +pct, validFrom: from, validUntil: until, isActive: +active })
+  });
+  if (!r.ok) { const d = await r.json(); toast(d.error || 'Failed', 'error'); return; }
+  toast('Discount created ✅');
+  ['d-code','d-desc','d-pct','d-from','d-until'].forEach(id => document.getElementById(id).value = '');
+  loadDiscounts();
+  // refresh discount dropdown
+  document.getElementById('b-discount').innerHTML = '<option value="">— No discount —</option>';
+  const dr = await fetch(API + '/discounts');
+  discounts = await dr.json().catch(() => []);
+  discounts.filter(d => d.isActive).forEach(d => {
+    const o = document.createElement('option');
+    o.value = d.id; o.textContent = `${d.code} — ${d.percentage}% off`;
+    document.getElementById('b-discount').appendChild(o);
+  });
+}
+
+async function deleteDiscount(id) {
+  if (!confirm('Delete discount code?')) return;
+  await fetch(API + '/discounts/' + id, { method: 'DELETE' });
+  toast('Discount removed'); loadDiscounts();
+}
+
+// ── WAITLIST ──────────────────────────────────────
+async function loadWaitlist() {
+  const tbody = document.getElementById('waitlist-body');
+  tbody.innerHTML = '<tr><td colspan="7" class="no-data"><div class="spinner"></div></td></tr>';
+  try {
+    const r = await fetch(API + '/waitlist');
+    const ws = await r.json();
+    if (!ws.length) { tbody.innerHTML = '<tr><td colspan="7" class="no-data">Waitlist is empty.</td></tr>'; return; }
+    tbody.innerHTML = ws.map(w => `
+      <tr>
+        <td><span class="ticket-id">WL-${w.waitlistId}</span></td>
+        <td>${w.user}</td>
+        <td>${w.event}</td>
+        <td><span class="badge badge-${(w.category||'').toLowerCase()}">${w.category}</span></td>
+        <td>${w.requestDate}</td>
+        <td><span class="badge badge-${(w.status||'').toLowerCase()}">${w.status}</span></td>
+        <td>
+          <button class="btn btn-danger btn-sm" onclick="deleteWaitlist(${w.waitlistId})">🗑</button>
+        </td>
+      </tr>`).join('');
+  } catch { tbody.innerHTML = '<tr><td colspan="7" class="no-data">⚠️ Cannot reach server.</td></tr>'; }
+}
+
+async function addWaitlist() {
+  const uid  = document.getElementById('w-user').value;
+  const eid  = document.getElementById('w-event').value;
+  const cid  = document.getElementById('w-cat').value;
+  const date = document.getElementById('w-date').value;
+  const status = document.getElementById('w-status').value;
+  if (!uid || !eid || !cid) { toast('User, Event and Category required', 'error'); return; }
+  const r = await fetch(API + '/waitlist', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId: +uid, eventId: +eid, categoryId: +cid, requestDate: date, status })
+  });
+  if (!r.ok) { toast('Failed to add to waitlist', 'error'); return; }
+  toast('Added to waitlist ✅');
+  document.getElementById('w-user').selectedIndex = 0;
+  document.getElementById('w-event').selectedIndex = 0;
+  document.getElementById('w-cat').selectedIndex = 0;
+  document.getElementById('w-date').value = '';
+  loadWaitlist(); loadStats();
+}
+
+async function deleteWaitlist(id) {
+  if (!confirm('Remove from waitlist?')) return;
+  await fetch(API + '/waitlist/' + id, { method: 'DELETE' });
+  toast('Removed from waitlist'); loadWaitlist(); loadStats();
+}
+
+// ── PAYMENTS ──────────────────────────────────────
+async function loadPayments() {
+  const tbody = document.getElementById('payments-body');
+  tbody.innerHTML = '<tr><td colspan="8" class="no-data"><div class="spinner"></div></td></tr>';
+  try {
+    const r = await fetch(API + '/payments');
+    const ps = await r.json();
+    if (!ps.length) { tbody.innerHTML = '<tr><td colspan="8" class="no-data">No payment records yet.</td></tr>'; return; }
+    tbody.innerHTML = ps.map(p => `
+      <tr>
+        <td><span class="ticket-id">PAY-${p.paymentId}</span></td>
+        <td><span class="ticket-id">TKT-${p.ticketId}</span></td>
+        <td>${p.user || '—'}</td>
+        <td><span class="price-badge">PKR ${Number(p.amount).toLocaleString()}</span></td>
+        <td>${p.method}</td>
+        <td>${p.transactionDate}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted)">${p.transactionRef || '—'}</td>
+        <td><span class="badge badge-${(p.status||'').toLowerCase()}">${p.status}</span></td>
+      </tr>`).join('');
+  } catch { tbody.innerHTML = '<tr><td colspan="8" class="no-data">⚠️ Cannot reach server.</td></tr>'; }
+}
+
+// ── CANCELLATIONS ─────────────────────────────────
+async function loadCancellations() {
+  const tbody = document.getElementById('cancellations-body');
+  tbody.innerHTML = '<tr><td colspan="9" class="no-data"><div class="spinner"></div></td></tr>';
+  try {
+    const r = await fetch(API + '/cancellations');
+    const cs = await r.json();
+    if (!cs.length) { tbody.innerHTML = '<tr><td colspan="9" class="no-data">No cancellation records.</td></tr>'; return; }
+    tbody.innerHTML = cs.map(c => `
+      <tr>
+        <td><span class="ticket-id">CAN-${c.cancellationId}</span></td>
+        <td><span class="ticket-id">TKT-${c.ticketId}</span></td>
+        <td>${c.user || '—'}</td>
+        <td>${c.event || '—'}</td>
+        <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis">${c.reason || '—'}</td>
+        <td>${c.cancelDate}</td>
+        <td><span class="badge badge-${(c.refundStatus||'').toLowerCase()}">${c.refundStatus}</span></td>
+        <td><span class="price-badge">PKR ${Number(c.refundAmount || 0).toLocaleString()}</span></td>
+        <td>${c.processedBy || '—'}</td>
+      </tr>`).join('');
+  } catch { tbody.innerHTML = '<tr><td colspan="9" class="no-data">⚠️ Cannot reach server.</td></tr>'; }
+}
+
+async function addCancellation() {
+  const ticketId   = document.getElementById('c-ticket').value;
+  const reason     = document.getElementById('c-reason').value.trim();
+  const cancelDate = document.getElementById('c-date').value;
+  const refundStatus = document.getElementById('c-refund').value;
+  const refundAmount = document.getElementById('c-amount').value;
+  const staffId    = document.getElementById('c-staff').value;
+  if (!ticketId) { toast('Ticket ID required', 'error'); return; }
+  const r = await fetch(API + '/cancellations', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      ticketId: +ticketId, reason, cancelDate, refundStatus,
+      refundAmount: refundAmount ? +refundAmount : 0,
+      processedBy: staffId ? +staffId : null
+    })
+  });
+  if (!r.ok) { const d = await r.json(); toast(d.error || 'Failed', 'error'); return; }
+  toast('Cancellation processed ✅');
+  ['c-ticket','c-reason','c-date','c-amount'].forEach(id => document.getElementById(id).value = '');
+  loadCancellations(); loadStats();
+}
+
+// ── CATEGORIES ───────────────────────────────────
+async function loadCategories() {
+  const grid = document.getElementById('categories-grid');
+  grid.innerHTML = '<div style="color:var(--muted);padding:2rem"><div class="spinner"></div></div>';
+  try {
+    const r = await fetch(API + '/categories');
+    const cs = await r.json();
+    if (!cs.length) { grid.innerHTML = '<p style="color:var(--muted)">No categories yet.</p>'; return; }
+    grid.innerHTML = cs.map(c => `
+      <div class="discount-card">
+        <div class="discount-code">${c.name}</div>
+        <div class="discount-pct">PKR ${Number(c.price).toLocaleString()}</div>
+        <div class="info-id">CID-${c.id}</div>
+        <div class="card-actions">
+          <button class="btn btn-danger btn-sm" onclick="deleteCategory(${c.id})">🗑 Remove</button>
+        </div>
+      </div>`).join('');
+  } catch { grid.innerHTML = '<div style="color:var(--muted)">⚠️ Cannot reach server.</div>'; }
+}
+
+async function addCategory() {
+  const name  = document.getElementById('cat-name').value.trim();
+  const price = document.getElementById('cat-price').value;
+  if (!name || !price) { toast('Name and price required', 'error'); return; }
+  const r = await fetch(API + '/categories', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ categoryName: name, price: +price })
+  });
+  if (!r.ok) { const d = await r.json(); toast(d.error || 'Failed', 'error'); return; }
+  toast('Category added ✅');
+  ['cat-name','cat-price'].forEach(id => document.getElementById(id).value = '');
+  loadCategories();
+  // refresh category dropdowns
+  document.getElementById('b-cat').innerHTML = '<option value="">— Select category —</option>';
+  document.getElementById('w-cat').innerHTML = '<option value="">— Select category —</option>';
+  const cr = await fetch(API + '/categories');
+  categories = await cr.json().catch(() => []);
+  categories.forEach(c => {
+    const o1 = document.createElement('option');
+    o1.value = c.id; o1.textContent = `${c.name} — PKR ${Number(c.price).toLocaleString()}`;
+    o1.dataset.price = c.price;
+    document.getElementById('b-cat').appendChild(o1);
+    const o2 = document.createElement('option');
+    o2.value = c.id; o2.textContent = c.name;
+    document.getElementById('w-cat').appendChild(o2);
+  });
+}
+
+async function deleteCategory(id) {
+  if (!confirm('Delete category? This may affect existing tickets.')) return;
+  await fetch(API + '/categories/' + id, { method: 'DELETE' });
+  toast('Category removed'); loadCategories();
+}
+
 // ── INIT ──────────────────────────────────────────
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('b-bdate').value = today;
+document.getElementById('w-date').value  = today;
+document.getElementById('c-date').value  = today;
+document.getElementById('s-hire').value  = today;
+
 (async () => {
   await loadDropdowns();
   await loadStats();
