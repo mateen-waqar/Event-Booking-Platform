@@ -9,7 +9,6 @@ load_dotenv()
 
 # Dynamic template path (works on localhost + Vercel)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# Works for both: Vercel (api/server.py) and localhost (python api/server.py or python server.py)
 template_dir = os.path.join(BASE_DIR, "../templates")
 if not os.path.exists(template_dir):
     template_dir = os.path.join(BASE_DIR, "templates")
@@ -51,13 +50,18 @@ def get_stats():
         pay_rows = supabase.table("Payments").select("Amount").execute().data
         revenue  = sum(float(r.get("Amount") or 0) for r in pay_rows)
 
+        # Subtract refunded amounts from revenue
+        refund_rows = supabase.table("Cancellations").select("RefundAmount, RefundStatus").execute().data
+        refunded = sum(float(r.get("RefundAmount") or 0) for r in refund_rows if r.get("RefundStatus") == "Refunded")
+        revenue = max(0, revenue - refunded)
+
         return jsonify({
-            "total": total,
-            "paid": paid,
-            "events": events,
-            "waitlist": waitlist,
+            "total":      total,
+            "paid":       paid,
+            "events":     events,
+            "waitlist":   waitlist,
             "categories": cats,
-            "revenue": revenue
+            "revenue":    revenue
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -73,7 +77,7 @@ def get_events():
             .execute()
         events = []
         for r in res.data:
-            venue = r.get("Venues") or {}
+            venue = r.get("Venues")     or {}
             org   = r.get("Organizers") or {}
             events.append({
                 "id":        r.get("EventID"),
@@ -95,13 +99,16 @@ def get_events():
 def add_event():
     try:
         d = request.json
+        total_seats = d.get("totalSeats")
+        if not total_seats or int(total_seats) < 1:
+            return jsonify({"error": "Total seats must be at least 1"}), 400
         supabase.table("Events").insert({
             "EventName":   d["eventName"],
             "EventDate":   d.get("eventDate"),
             "EventType":   d.get("eventType"),
             "VenueID":     d.get("venueId"),
             "OrganizerID": d.get("organizerId"),
-            "TotalSeats":  d.get("totalSeats")
+            "TotalSeats":  int(total_seats)
         }).execute()
         return jsonify({"message": "Event created"}), 201
     except Exception as e:
@@ -361,7 +368,7 @@ def add_discount():
             "Percentage":  d.get("percentage"),
             "ValidFrom":   d.get("validFrom"),
             "ValidUntil":  d.get("validUntil"),
-            "IsActive":    d.get("isActive", 1)
+            "IsActive":    d.get("isActive", True)
         }).execute()
         return jsonify({"message": "Discount created"}), 201
     except Exception as e:
@@ -382,22 +389,27 @@ def delete_discount(did):
 @app.route("/api/tickets", methods=["GET"])
 def get_tickets():
     try:
-        res = supabase.table("EventTickets") \
-            .select("*, Events(EventName, EventDate, Venues(VenueName)), Users(UserName), Categories(CategoryName, Price), Staff(StaffName), Discounts(Code)") \
-            .execute()
+        res = supabase.table("EventTickets").select("*").execute()
+
+        # Build lookup maps to avoid nested FK join issues
+        events_map = {r["EventID"]: r for r in supabase.table("Events").select("EventID, EventName, EventDate").execute().data}
+        users_map  = {r["UserID"]:  r for r in supabase.table("Users").select("UserID, UserName").execute().data}
+        cats_map   = {r["CategoryID"]: r for r in supabase.table("Categories").select("CategoryID, CategoryName, Price").execute().data}
+        staff_map  = {r["StaffID"]:  r for r in supabase.table("Staff").select("StaffID, StaffName").execute().data}
+        disc_map   = {r["DiscountID"]: r for r in supabase.table("Discounts").select("DiscountID, Code").execute().data}
+
         tickets = []
         for r in res.data:
-            ev   = r.get("Events")      or {}
-            usr  = r.get("Users")       or {}
-            cat  = r.get("Categories")  or {}
-            stf  = r.get("Staff")       or {}
-            disc = r.get("Discounts")   or {}
-            venue = ev.get("Venues")    or {}
+            ev   = events_map.get(r.get("EventID"))   or {}
+            usr  = users_map.get(r.get("UserID"))     or {}
+            cat  = cats_map.get(r.get("CategoryID"))  or {}
+            stf  = staff_map.get(r.get("StaffID"))    or {}
+            disc = disc_map.get(r.get("DiscountID"))  or {}
             tickets.append({
                 "ticketId":  r.get("TicketID"),
                 "event":     ev.get("EventName"),
                 "eventDate": ev.get("EventDate"),
-                "location":  venue.get("VenueName"),
+                "location":  None,
                 "user":      usr.get("UserName"),
                 "category":  cat.get("CategoryName"),
                 "price":     cat.get("Price", 0),
@@ -417,40 +429,63 @@ def book_ticket():
     try:
         d = request.json
 
-        # Check seat not already taken
-        seat_check = supabase.table("EventTickets").select("*") \
+        # ── Step 1: Find or create user by CNIC ──
+        user_id = None
+        cnic = d.get("cnic")
+        if cnic:
+            existing = supabase.table("Users").select("UserID").eq("CNIC", cnic).execute()
+            if existing.data:
+                user_id = existing.data[0]["UserID"]
+            else:
+                new_user = supabase.table("Users").insert({
+                    "UserName": d.get("userName"),
+                    "Email":    d.get("email"),
+                    "Phone":    d.get("phone"),
+                    "CNIC":     cnic
+                }).execute()
+                user_id = new_user.data[0]["UserID"]
+        else:
+            new_user = supabase.table("Users").insert({
+                "UserName": d.get("userName"),
+                "Email":    d.get("email"),
+                "Phone":    d.get("phone"),
+            }).execute()
+            user_id = new_user.data[0]["UserID"]
+
+        # ── Step 2: Check seat not already taken ──
+        seat_check = supabase.table("EventTickets").select("TicketID") \
             .eq("EventID", d["eventId"]) \
             .eq("SeatNo", d["seatNo"]).execute()
         if seat_check.data:
             return jsonify({"error": "Seat already booked"}), 409
 
-        # Insert ticket
+        # ── Step 3: Insert ticket ──
         result = supabase.table("EventTickets").insert({
             "EventID":       d["eventId"],
-            "UserID":        d["userId"],
+            "UserID":        user_id,
             "CategoryID":    d["categoryId"],
             "StaffID":       d.get("staffId"),
             "DiscountID":    d.get("discountId"),
             "SeatNo":        d["seatNo"],
-            "PaymentStatus": "Paid"
+            "BookingDate":   d.get("bookingDate"),
+            "PaymentStatus": d.get("paymentStatus", "Pending")
         }).execute()
 
         ticket_id = result.data[0].get("TicketID") if result.data else None
 
-        # Auto-create payment record
+        # ── Step 4: Auto-create payment record ──
         if ticket_id:
             cat = supabase.table("Categories").select("Price") \
                 .eq("CategoryID", d["categoryId"]).execute()
             price = cat.data[0].get("Price", 0) if cat.data else 0
             supabase.table("Payments").insert({
-                "TicketID":       ticket_id,
-                "Amount":         price,
-                "PaymentMethod":  d.get("paymentMethod", "Cash"),
-                "Status":         "Paid",
-                "TransactionRef": d.get("transactionRef")
+                "TicketID":      ticket_id,
+                "Amount":        price,
+                "PaymentMethod": d.get("paymentMethod", "Cash"),
+                "Status":        d.get("paymentStatus", "Pending"),
             }).execute()
 
-        return jsonify({"message": "Ticket booked"}), 201
+        return jsonify({"message": "Ticket booked", "ticketId": ticket_id}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -497,9 +532,9 @@ def get_waitlist():
             .execute()
         waitlist = []
         for r in res.data:
-            ev  = r.get("Events")      or {}
-            usr = r.get("Users")       or {}
-            cat = r.get("Categories")  or {}
+            ev  = r.get("Events")     or {}
+            usr = r.get("Users")      or {}
+            cat = r.get("Categories") or {}
             waitlist.append({
                 "waitlistId":  r.get("WaitlistID"),
                 "event":       ev.get("EventName"),
@@ -543,13 +578,15 @@ def delete_waitlist(wid):
 @app.route("/api/payments", methods=["GET"])
 def get_payments():
     try:
-        res = supabase.table("Payments") \
-            .select("*, EventTickets(UserID, Users(UserName))") \
-            .execute()
+        res = supabase.table("Payments").select("*").execute()
+
+        tickets_map = {r["TicketID"]: r for r in supabase.table("EventTickets").select("TicketID, UserID").execute().data}
+        users_map   = {r["UserID"]:   r for r in supabase.table("Users").select("UserID, UserName").execute().data}
+
         payments = []
         for r in res.data:
-            ticket = r.get("EventTickets") or {}
-            usr    = ticket.get("Users")   or {}
+            ticket = tickets_map.get(r.get("TicketID")) or {}
+            usr    = users_map.get(ticket.get("UserID")) or {}
             payments.append({
                 "paymentId":       r.get("PaymentID"),
                 "ticketId":        r.get("TicketID"),
@@ -570,15 +607,19 @@ def get_payments():
 @app.route("/api/cancellations", methods=["GET"])
 def get_cancellations():
     try:
-        res = supabase.table("Cancellations") \
-            .select("*, EventTickets(UserID, EventID, Users(UserName), Events(EventName)), Staff(StaffName)") \
-            .execute()
+        res = supabase.table("Cancellations").select("*").execute()
+
+        tickets_map = {r["TicketID"]: r for r in supabase.table("EventTickets").select("TicketID, UserID, EventID").execute().data}
+        users_map   = {r["UserID"]:   r for r in supabase.table("Users").select("UserID, UserName").execute().data}
+        events_map  = {r["EventID"]:  r for r in supabase.table("Events").select("EventID, EventName").execute().data}
+        staff_map   = {r["StaffID"]:  r for r in supabase.table("Staff").select("StaffID, StaffName").execute().data}
+
         cancellations = []
         for r in res.data:
-            ticket = r.get("EventTickets") or {}
-            usr    = ticket.get("Users")   or {}
-            ev     = ticket.get("Events")  or {}
-            stf    = r.get("Staff")        or {}
+            ticket = tickets_map.get(r.get("TicketID")) or {}
+            usr    = users_map.get(ticket.get("UserID"))   or {}
+            ev     = events_map.get(ticket.get("EventID")) or {}
+            stf    = staff_map.get(r.get("ProcessedBy"))   or {}
             cancellations.append({
                 "cancellationId": r.get("CancellationID"),
                 "ticketId":       r.get("TicketID"),
@@ -610,6 +651,7 @@ def add_cancellation():
         return jsonify({"message": "Cancellation recorded"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
     app.run(debug=True)
-    
