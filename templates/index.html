@@ -21,9 +21,49 @@
   --muted:#6b6b8a;
   --radius:14px;
   --shadow:0 8px 32px rgba(0,0,0,.5);
+  --header-bg:rgba(10,10,15,0.95);
 }
+/* ─── LIGHT THEME ───────────────────────────────────── */
+body.light{
+  --bg:#f4f4f7;
+  --surface:#ffffff;
+  --card:#ffffff;
+  --border:#e0e0ea;
+  --text:#111118;
+  --muted:#888899;
+  --shadow:0 8px 32px rgba(0,0,0,.1);
+  --header-bg:rgba(255,255,255,0.95);
+}
+body.light ::-webkit-scrollbar-track{background:#e8e8f0}
+body.light ::-webkit-scrollbar-thumb{background:#c0c0d0}
+body.light .form-group input,body.light .form-group select{color:#111118}
+body.light .form-group input::placeholder{color:#aaaabc}
+body.light .stat-card{box-shadow:0 2px 12px rgba(0,0,0,.06)}
+/* ─── THEME TOGGLE ──────────────────────────────────── */
+.theme-toggle{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:30px;padding:5px 12px 5px 6px;
+  cursor:pointer;transition:all .25s;flex-shrink:0;
+  font-size:.78rem;font-weight:600;color:var(--muted);
+}
+.theme-toggle:hover{border-color:var(--accent);color:var(--text)}
+.toggle-track{
+  width:36px;height:20px;border-radius:10px;
+  background:var(--border);position:relative;transition:background .25s;
+  flex-shrink:0;
+}
+body.light .toggle-track{background:var(--accent)}
+.toggle-thumb{
+  position:absolute;top:3px;left:3px;
+  width:14px;height:14px;border-radius:50%;
+  background:#fff;transition:transform .25s;
+  box-shadow:0 1px 4px rgba(0,0,0,.3);
+}
+body.light .toggle-thumb{transform:translateX(16px)}
+.toggle-label{font-size:.78rem;font-weight:600;color:var(--muted);letter-spacing:.5px}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
 
 /* ─── SCROLLBAR ─────────────────────────────────────── */
 ::-webkit-scrollbar{width:6px}
@@ -32,10 +72,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 /* ─── HERO NAV ──────────────────────────────────────── */
 header{
-  background:linear-gradient(135deg,#0a0a0f 0%,#13131c 100%);
+  background:var(--header-bg);
   border-bottom:1px solid var(--border);
   position:sticky;top:0;z-index:100;
   backdrop-filter:blur(20px);
+  transition:background .3s,border-color .3s;
 }
 .nav{display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;max-width:1600px;margin:auto}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:2px;
@@ -48,24 +89,70 @@ header{
 .tab-btn.active{background:var(--accent);color:#fff}
 .tab-btn:hover:not(.active){color:var(--text);background:var(--border)}
 
-/* ─── HERO ──────────────────────────────────────────── */
+/* ─── HERO SLIDER ───────────────────────────────────── */
 .hero{
-  text-align:center;padding:60px 2rem 40px;
-  background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(255,77,0,.12),transparent);
   position:relative;overflow:hidden;
+  height:420px;
 }
-.hero::before{
-  content:'';position:absolute;inset:0;
-  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff4d00' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+.hero-slides{
+  display:flex;width:100%;height:100%;
+  transition:transform .7s cubic-bezier(.77,0,.18,1);
 }
-.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,7vw,6rem);
-  line-height:.95;letter-spacing:3px;position:relative}
-.hero-title span{color:var(--accent)}
-.hero-sub{color:var(--muted);font-size:1.05rem;margin-top:1rem;font-weight:300}
-
-/* ─── STATS BAR ─────────────────────────────────────── */
+.hero-slide{
+  min-width:100%;height:100%;position:relative;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.slide-bg{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  transition:transform 8s linear;
+  background-color:#1a0a00;
+}
+.slide-bg-1{ background-image:url('/static/concert.jfif'); background-color:#2d1200; }
+.slide-bg-2{ background-image:url('/static/sports.jfif');  background-color:#0a2d12; }
+.slide-bg-3{ background-image:url('/static/seminar.jfif'); background-color:#1a0a2d; }
+.slide-bg-4{ background-image:url('/static/festival.jfif');background-color:#2d2500; }
+.hero-slide.active .slide-bg{transform:scale(1.06)}
+.slide-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.35) 0%,rgba(0,0,0,.65) 100%);
+}
+.slide-content{
+  position:relative;z-index:2;text-align:center;padding:0 2rem;
+  animation:slideIn .7s ease forwards;
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.slide-tag{
+  display:inline-block;background:var(--accent);color:#fff;
+  font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:4px 14px;border-radius:20px;margin-bottom:1rem;
+}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,7vw,5.5rem);
+  line-height:.95;letter-spacing:3px;color:#fff;text-shadow:0 4px 20px rgba(0,0,0,.6)}
+.hero-title span{color:var(--accent2)}
+.hero-sub{color:rgba(255,255,255,.8);font-size:1.05rem;margin-top:.75rem;font-weight:300}
+/* Slider controls */
+.slide-prev,.slide-next{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:10;
+  background:rgba(255,255,255,.15);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.25);color:#fff;
+  width:44px;height:44px;border-radius:50%;cursor:pointer;
+  font-size:1.3rem;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.slide-prev{left:1.5rem}.slide-next{right:1.5rem}
+.slide-prev:hover,.slide-next:hover{background:var(--accent);border-color:var(--accent)}
+.slide-dots{
+  position:absolute;bottom:1.2rem;left:50%;transform:translateX(-50%);
+  display:flex;gap:8px;z-index:10;
+}
+.slide-dot{
+  width:8px;height:8px;border-radius:4px;background:rgba(255,255,255,.35);
+  cursor:pointer;transition:all .3s;border:none;padding:0;
+}
+.slide-dot.active{background:#fff;width:24px}
+/* Stats bar BELOW hero */
 .stats-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;
-  max-width:1200px;margin:2rem auto 0;padding:0 2rem}
+  max-width:1200px;margin:0 auto;padding:2rem 2rem 0;}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
   padding:1.2rem;text-align:center;transition:transform .2s}
 .stat-card:hover{transform:translateY(-3px)}
@@ -248,21 +335,82 @@ header{
       <button class="tab-btn"         onclick="showPage('cancellations',this)">❌ Cancel</button>
       <button class="tab-btn"         onclick="showPage('categories',this)">🏷 Categories</button>
     </div>
+    <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" title="Toggle theme">
+      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      <span class="toggle-label" id="theme-label">🌙 Dark</span>
+    </button>
   </nav>
 </header>
 
-<!-- HERO -->
+<!-- HERO SLIDER -->
 <section class="hero">
-  <h1 class="hero-title">BOOK YOUR<br/><span>EXPERIENCE.</span></h1>
-  <p class="hero-sub">Reserve seats for concerts, seminars, sports &amp; more — instantly.</p>
-  <div class="stats-bar">
-    <div class="stat-card"><div class="stat-num" id="st-total">—</div><div class="stat-label">Total Tickets</div></div>
-    <div class="stat-card"><div class="stat-num" id="st-paid">—</div><div class="stat-label">Paid</div></div>
-    <div class="stat-card"><div class="stat-num" id="st-revenue">—</div><div class="stat-label">Revenue (PKR)</div></div>
-    <div class="stat-card"><div class="stat-num" id="st-events">—</div><div class="stat-label">Events</div></div>
-    <div class="stat-card"><div class="stat-num" id="st-waitlist">—</div><div class="stat-label">Waitlist</div></div>
+  <div class="hero-slides" id="hero-slides">
+
+    <!-- Slide 1: Concert -->
+    <div class="hero-slide active">
+      <div class="slide-bg slide-bg-1"></div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-tag">🎸 Live Concert</div>
+        <h1 class="hero-title">FEEL THE<br/><span>MUSIC.</span></h1>
+        <p class="hero-sub">Book front-row seats for the hottest concerts in town.</p>
+      </div>
+    </div>
+
+    <!-- Slide 2: Sports -->
+    <div class="hero-slide">
+      <div class="slide-bg slide-bg-2"></div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-tag">⚽ Sports Events</div>
+        <h1 class="hero-title">LIVE THE<br/><span>GAME.</span></h1>
+        <p class="hero-sub">Get stadium tickets for every match — from cricket to football.</p>
+      </div>
+    </div>
+
+    <!-- Slide 3: Seminar -->
+    <div class="hero-slide">
+      <div class="slide-bg slide-bg-3"></div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-tag">🎤 Seminars & Talks</div>
+        <h1 class="hero-title">GROW YOUR<br/><span>MIND.</span></h1>
+        <p class="hero-sub">Reserve seats for conferences, workshops, and keynotes.</p>
+      </div>
+    </div>
+
+    <!-- Slide 4: Festival -->
+    <div class="hero-slide">
+      <div class="slide-bg slide-bg-4"></div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-tag">🎉 Festivals</div>
+        <h1 class="hero-title">CELEBRATE<br/><span>TOGETHER.</span></h1>
+        <p class="hero-sub">From cultural festivals to grand galas — your ticket awaits.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Controls -->
+  <button class="slide-prev" onclick="moveSlide(-1)">‹</button>
+  <button class="slide-next" onclick="moveSlide(1)">›</button>
+  <div class="slide-dots" id="slide-dots">
+    <button class="slide-dot active" onclick="goSlide(0)"></button>
+    <button class="slide-dot" onclick="goSlide(1)"></button>
+    <button class="slide-dot" onclick="goSlide(2)"></button>
+    <button class="slide-dot" onclick="goSlide(3)"></button>
   </div>
 </section>
+
+<!-- STATS BAR (below slider) -->
+<div class="stats-bar">
+  <div class="stat-card"><div class="stat-num" id="st-total">—</div><div class="stat-label">Total Tickets</div></div>
+  <div class="stat-card"><div class="stat-num" id="st-paid">—</div><div class="stat-label">Paid</div></div>
+  <div class="stat-card"><div class="stat-num" id="st-revenue">—</div><div class="stat-label">Revenue (PKR)</div></div>
+  <div class="stat-card"><div class="stat-num" id="st-events">—</div><div class="stat-label">Events</div></div>
+  <div class="stat-card"><div class="stat-num" id="st-waitlist">—</div><div class="stat-label">Waitlist</div></div>
+</div>
 
 <!-- MAIN -->
 <main class="main">
@@ -1642,6 +1790,52 @@ document.getElementById('s-hire').value  = today;
   await loadDropdowns();
   await loadStats();
 })();
+
+// ── HERO SLIDER ───────────────────────────────────
+let currentSlide = 0;
+const totalSlides = 4;
+let sliderTimer = null;
+
+function goSlide(n) {
+  const slides = document.querySelectorAll('.hero-slide');
+  const dots   = document.querySelectorAll('.slide-dot');
+  slides[currentSlide].classList.remove('active');
+  dots[currentSlide].classList.remove('active');
+  currentSlide = (n + totalSlides) % totalSlides;
+  slides[currentSlide].classList.add('active');
+  dots[currentSlide].classList.add('active');
+  document.getElementById('hero-slides').style.transform = `translateX(-${currentSlide * 100}%)`;
+  // Re-trigger content animation
+  const content = slides[currentSlide].querySelector('.slide-content');
+  content.style.animation = 'none';
+  content.offsetHeight; // reflow
+  content.style.animation = '';
+}
+
+function moveSlide(dir) {
+  clearInterval(sliderTimer);
+  goSlide(currentSlide + dir);
+  startSliderTimer();
+}
+
+function startSliderTimer() {
+  sliderTimer = setInterval(() => goSlide(currentSlide + 1), 5000);
+}
+
+startSliderTimer();
+
+// ── THEME TOGGLE ──────────────────────────────────
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  document.getElementById('theme-label').textContent = isLight ? '☀️ Light' : '🌙 Dark';
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+}
+
+// Restore saved theme
+if (localStorage.getItem('theme') === 'light') {
+  document.body.classList.add('light');
+  document.getElementById('theme-label').textContent = '☀️ Light';
+}
 </script>
 </body>
 </html>

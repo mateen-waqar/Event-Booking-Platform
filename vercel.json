@@ -1,5 +1,7 @@
 {
   "routes": [
+    { "src": "/static/(.*\\.jfif)", "dest": "/static/$1", "headers": { "Content-Type": "image/jpeg" } },
+    { "src": "/static/(.*)", "dest": "/static/$1" },
     { "src": "/api/(.*)", "dest": "api/server.py" },
     { "src": "/(.*)", "dest": "api/server.py" }
   ]
