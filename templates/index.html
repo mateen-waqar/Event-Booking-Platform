@@ -77,12 +77,14 @@ header{
   position:sticky;top:0;z-index:100;
   backdrop-filter:blur(20px);
   transition:background .3s,border-color .3s;
+  height:64px;overflow:hidden;
 }
-.nav{display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;max-width:1600px;margin:auto}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:64px;max-width:1600px;margin:auto;gap:1rem;overflow:hidden}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:2px;
   background:linear-gradient(90deg,var(--accent),var(--accent2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-tabs{display:flex;gap:4px;background:var(--surface);padding:4px;border-radius:10px;border:1px solid var(--border);flex-wrap:wrap}
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;flex-shrink:0}
+.nav-tabs{display:flex;gap:2px;background:var(--surface);padding:4px;border-radius:10px;border:1px solid var(--border);flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;flex:1;min-width:0}
+.nav-tabs::-webkit-scrollbar{display:none}
 .tab-btn{background:none;border:none;color:var(--muted);padding:7px 14px;border-radius:7px;
   cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;
   transition:all .2s}
@@ -107,10 +109,22 @@ header{
   transition:transform 8s linear;
   background-color:#1a0a00;
 }
-.slide-bg-1{ background-image:url('/static/concert.jfif'); background-color:#2d1200; }
-.slide-bg-2{ background-image:url('/static/sports.jfif');  background-color:#0a2d12; }
-.slide-bg-3{ background-image:url('/static/seminar.jfif'); background-color:#1a0a2d; }
-.slide-bg-4{ background-image:url('/static/festival.jfif');background-color:#2d2500; }
+.slide-bg-1{
+  background:radial-gradient(ellipse at 30% 60%, #4a1200 0%, #1a0800 40%, #0a0500 100%),
+             repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,77,0,.04) 40px, rgba(255,77,0,.04) 80px);
+}
+.slide-bg-2{
+  background:radial-gradient(ellipse at 70% 40%, #0a2d12 0%, #051a08 40%, #020d04 100%),
+             repeating-linear-gradient(-45deg, transparent, transparent 50px, rgba(0,230,118,.03) 50px, rgba(0,230,118,.03) 100px);
+}
+.slide-bg-3{
+  background:radial-gradient(ellipse at 50% 70%, #1a0a2d 0%, #0d0518 40%, #050208 100%),
+             repeating-linear-gradient(30deg, transparent, transparent 60px, rgba(138,77,255,.04) 60px, rgba(138,77,255,.04) 120px);
+}
+.slide-bg-4{
+  background:radial-gradient(ellipse at 60% 30%, #2d2000 0%, #1a1200 40%, #0d0900 100%),
+             repeating-linear-gradient(60deg, transparent, transparent 40px, rgba(245,197,24,.04) 40px, rgba(245,197,24,.04) 80px);
+}
 .hero-slide.active .slide-bg{transform:scale(1.06)}
 .slide-overlay{
   position:absolute;inset:0;
@@ -349,6 +363,9 @@ header{
     <!-- Slide 1: Concert -->
     <div class="hero-slide active">
       <div class="slide-bg slide-bg-1"></div>
+      <div class="slide-deco" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden">
+        <span style="font-size:22rem;opacity:.07;user-select:none;transform:rotate(-15deg)">🎸</span>
+      </div>
       <div class="slide-overlay"></div>
       <div class="slide-content">
         <div class="slide-tag">🎸 Live Concert</div>
@@ -360,6 +377,9 @@ header{
     <!-- Slide 2: Sports -->
     <div class="hero-slide">
       <div class="slide-bg slide-bg-2"></div>
+      <div class="slide-deco" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden">
+        <span style="font-size:22rem;opacity:.07;user-select:none;transform:rotate(10deg)">⚽</span>
+      </div>
       <div class="slide-overlay"></div>
       <div class="slide-content">
         <div class="slide-tag">⚽ Sports Events</div>
@@ -371,6 +391,9 @@ header{
     <!-- Slide 3: Seminar -->
     <div class="hero-slide">
       <div class="slide-bg slide-bg-3"></div>
+      <div class="slide-deco" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden">
+        <span style="font-size:22rem;opacity:.07;user-select:none;transform:rotate(-8deg)">🎤</span>
+      </div>
       <div class="slide-overlay"></div>
       <div class="slide-content">
         <div class="slide-tag">🎤 Seminars & Talks</div>
@@ -382,6 +405,9 @@ header{
     <!-- Slide 4: Festival -->
     <div class="hero-slide">
       <div class="slide-bg slide-bg-4"></div>
+      <div class="slide-deco" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden">
+        <span style="font-size:22rem;opacity:.07;user-select:none;transform:rotate(5deg)">🎉</span>
+      </div>
       <div class="slide-overlay"></div>
       <div class="slide-content">
         <div class="slide-tag">🎉 Festivals</div>
@@ -469,9 +495,9 @@ header{
         </div>
         <div class="form-group">
           <label>Seat *</label>
-          <div style="display:flex;gap:8px">
-            <input id="b-seat" readonly placeholder="Select from seat map" style="flex:1"/>
-            <button class="btn btn-ghost" onclick="openSeatMap()" id="seat-map-btn" disabled>🗺 Map</button>
+          <div style="display:flex;gap:8px;min-width:0;overflow:hidden">
+            <input id="b-seat" readonly placeholder="Select from seat map" style="flex:1;min-width:0"/>
+            <button class="btn btn-ghost" onclick="openSeatMap()" id="seat-map-btn" style="flex-shrink:0;white-space:nowrap">🗺 Map</button>
           </div>
         </div>
         <div class="form-group">
@@ -1127,17 +1153,22 @@ function onCatChange() {
 function onEventChange() {
   document.getElementById('b-seat').value = '';
   selectedSeat = null; bookedSeats = [];
-  document.getElementById('seat-map-btn').disabled = !document.getElementById('b-event').value;
+  // seat-map-btn always enabled
 }
 
 // ── SEAT MAP ──────────────────────────────────────
 async function openSeatMap() {
   const eid = document.getElementById('b-event').value;
-  if (!eid) return;
-  const ev = events.find(e => e.id == eid);
-  document.getElementById('modal-event-name').textContent = ev?.name || 'Select Seat';
-  const r = await fetch(API + '/tickets/booked-seats/' + eid);
-  bookedSeats = await r.json().catch(() => []);
+  const ev = eid ? events.find(e => e.id == eid) : null;
+  document.getElementById('modal-event-name').textContent = ev?.name || 'Seat Map';
+  // Try to load booked seats but never block the modal from opening
+  bookedSeats = [];
+  if (eid) {
+    try {
+      const r = await fetch(API + '/tickets/booked-seats/' + eid);
+      if (r.ok) bookedSeats = await r.json();
+    } catch (_) {}
+  }
   buildSeatMap();
   document.getElementById('seat-modal').classList.add('open');
 }
@@ -1234,7 +1265,7 @@ function resetBookForm() {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('b-bdate').value = today;
   selectedSeat = null;
-  document.getElementById('seat-map-btn').disabled = true;
+  // seat-map-btn stays enabled
 }
 
 // ── TICKETS TABLE ─────────────────────────────────
