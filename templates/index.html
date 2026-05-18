@@ -258,9 +258,11 @@ header{
   background:var(--surface);color:var(--text);cursor:pointer;
   font-size:.72rem;font-family:'JetBrains Mono',monospace;font-weight:600;
   display:flex;align-items:center;justify-content:center;transition:all .15s}
-.seat:hover:not(.booked):not(.selected){background:rgba(255,77,0,.2);border-color:var(--accent)}
+.seat:hover:not(.booked):not(.selected):not(.locked){background:rgba(255,77,0,.2);border-color:var(--accent)}
 .seat.selected{background:var(--accent);border-color:var(--accent);color:#fff}
 .seat.booked{background:var(--border);color:var(--muted);cursor:not-allowed;opacity:.5}
+/* FIX 1: seats that belong to a different category are locked/dimmed */
+.seat.locked{background:var(--surface);color:var(--border);cursor:not-allowed;opacity:.3;border-style:dashed}
 .seat-legend{display:flex;gap:1.5rem;margin-bottom:1.5rem;flex-wrap:wrap}
 .legend-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted)}
 .legend-dot{width:14px;height:14px;border-radius:3px}
@@ -315,9 +317,124 @@ header{
   .form-grid{grid-template-columns:1fr}
   .table-wrap{overflow-x:auto}
 }
+
+/* ─── LOGIN PAGE ─────────────────────────────────────── */
+#login-screen{
+  position:fixed;inset:0;z-index:999;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .4s,transform .4s;
+}
+#login-screen.hidden{opacity:0;pointer-events:none;transform:scale(1.04)}
+.login-bg{
+  position:absolute;inset:0;overflow:hidden;
+}
+.login-bg-circle{
+  position:absolute;border-radius:50%;filter:blur(80px);opacity:.18;
+}
+.login-box{
+  position:relative;z-index:2;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:2.5rem 2.5rem 2rem;
+  width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,.6);
+}
+.login-logo{
+  font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:.25rem;display:flex;align-items:center;gap:10px;
+}
+.login-tagline{font-size:.8rem;color:var(--muted);margin-bottom:2rem;letter-spacing:.5px}
+.login-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:1px;margin-bottom:1.5rem}
+.login-field{margin-bottom:1rem}
+.login-field label{display:block;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+.login-field input{
+  width:100%;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:11px 14px;color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s;
+}
+.login-field input:focus{border-color:var(--accent)}
+.login-field input::placeholder{color:var(--muted)}
+.login-btn{
+  width:100%;margin-top:1.25rem;padding:12px;font-size:1rem;font-weight:700;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  color:#fff;border:none;border-radius:10px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;letter-spacing:.5px;
+  transition:opacity .2s,transform .2s;
+}
+.login-btn:hover{opacity:.88;transform:translateY(-1px)}
+.login-btn:active{transform:translateY(0)}
+.login-error{
+  background:rgba(255,50,50,.12);border:1px solid rgba(255,50,50,.3);
+  color:#ff6b6b;border-radius:8px;padding:10px 14px;font-size:.83rem;
+  margin-top:1rem;display:none;
+}
+.login-error.show{display:block}
+.login-hint{text-align:center;margin-top:1.25rem;font-size:.75rem;color:var(--muted)}
+.login-hint code{background:var(--surface);padding:2px 7px;border-radius:5px;font-family:'JetBrains Mono',monospace;color:var(--accent2)}
+.login-footer{text-align:center;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border);font-size:.75rem;color:var(--muted)}
+/* logout button in nav */
+.logout-btn{
+  background:rgba(255,77,0,.12);border:1px solid rgba(255,77,0,.25);
+  color:var(--accent);padding:6px 14px;border-radius:8px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;
+  transition:all .2s;flex-shrink:0;white-space:nowrap;
+}
+.logout-btn:hover{background:rgba(255,77,0,.25)}
+body.light .login-field input{color:#111118}
+body.light .login-field input::placeholder{color:#aaaabc}
+
+/* ─── SEARCH BAR ─────────────────────────────────────── */
+.search-wrap{position:relative;flex:1;max-width:320px}
+.search-wrap input{
+  width:100%;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:8px 14px 8px 36px;color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;transition:border-color .2s;
+}
+.search-wrap input:focus{border-color:var(--accent)}
+.search-wrap input::placeholder{color:var(--muted)}
+.search-wrap .search-icon{
+  position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  color:var(--muted);font-size:1rem;pointer-events:none;
+}
+body.light .search-wrap input{color:#111118}
 </style>
 </head>
 <body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-bg">
+    <div class="login-bg-circle" style="width:600px;height:600px;background:#ff4d00;top:-200px;right:-150px"></div>
+    <div class="login-bg-circle" style="width:400px;height:400px;background:#ff8c42;bottom:-100px;left:-100px"></div>
+  </div>
+  <div class="login-box">
+    <div class="login-logo">
+      <svg width="36" height="36" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" rx="8" fill="url(#lg2)"/>
+        <path d="M6 12.5C6 11.67 6.67 11 7.5 11H24.5C25.33 11 26 11.67 26 12.5V14a2 2 0 0 1 0 4v1.5C26 20.33 25.33 21 24.5 21H7.5C6.67 21 6 20.33 6 19.5V18a2 2 0 0 1 0-4v-1.5Z" fill="white" fill-opacity="0.95"/>
+        <rect x="13" y="11" width="1.5" height="2" rx="0.5" fill="#ff4d00"/>
+        <rect x="13" y="19" width="1.5" height="2" rx="0.5" fill="#ff4d00"/>
+        <rect x="13" y="14.5" width="1.5" height="3" rx="0.5" fill="#ff4d00"/>
+        <defs><linearGradient id="lg2" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse"><stop stop-color="#ff4d00"/><stop offset="1" stop-color="#ff8c42"/></linearGradient></defs>
+      </svg>
+      TicketVault
+    </div>
+    <div class="login-tagline">Event Booking Management System</div>
+    <div class="login-title">Welcome Back 👋</div>
+    <div class="login-field">
+      <label>Username</label>
+      <input id="login-user" type="text" placeholder="Enter your username" autocomplete="username"/>
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input id="login-pass" type="password" placeholder="Enter your password" autocomplete="current-password"/>
+    </div>
+    <button class="login-btn" onclick="doLogin()">Sign In →</button>
+    <div class="login-error" id="login-error">❌ Invalid username or password. Please try again.</div>
+    <div class="login-footer">TicketVault &copy; 2025 &nbsp;·&nbsp; All rights reserved</div>
+  </div>
+</div>
 
 <!-- NAV -->
 <header>
@@ -350,6 +467,7 @@ header{
       <div class="toggle-track"><div class="toggle-thumb"></div></div>
       <span class="toggle-label" id="theme-label">🌙 Dark</span>
     </button>
+    <button class="logout-btn" onclick="doLogout()" title="Sign out">⏻ Logout</button>
   </nav>
 </header>
 
@@ -530,7 +648,10 @@ header{
   <div id="page-tickets" class="page">
     <div class="section-header">
       <h2 class="section-title">ALL <span>TICKETS</span></h2>
-      <button class="btn btn-ghost btn-sm" onclick="loadTickets()">⟳ Refresh</button>
+      <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+        <div class="search-wrap"><span class="search-icon">🔍</span><input id="search-tickets" placeholder="Search tickets..." oninput="filterTable('tickets-body','search-tickets',13)"/></div>
+        <button class="btn btn-ghost btn-sm" onclick="loadTickets()">⟳ Refresh</button>
+      </div>
     </div>
     <div class="table-wrap">
       <table>
@@ -553,6 +674,7 @@ header{
   <div id="page-events" class="page">
     <div class="section-header">
       <h2 class="section-title">MANAGE <span>EVENTS</span></h2>
+      <div class="search-wrap"><span class="search-icon">🔍</span><input id="search-events" placeholder="Search events..." oninput="filterCards('events-grid','search-events')"/></div>
     </div>
     <div class="form-card">
       <div class="form-title">Add New Event</div>
@@ -606,6 +728,7 @@ header{
   <div id="page-users" class="page">
     <div class="section-header">
       <h2 class="section-title">REGISTERED <span>USERS</span></h2>
+      <div class="search-wrap"><span class="search-icon">🔍</span><input id="search-users" placeholder="Search users..." oninput="filterCards('users-grid','search-users')"/></div>
     </div>
     <div class="form-card">
       <div class="form-title">Add New User</div>
@@ -640,6 +763,7 @@ header{
   <div id="page-venues" class="page">
     <div class="section-header">
       <h2 class="section-title">MANAGE <span>VENUES</span></h2>
+      <div class="search-wrap"><span class="search-icon">🔍</span><input id="search-venues" placeholder="Search venues..." oninput="filterCards('venues-grid','search-venues')"/></div>
     </div>
     <div class="form-card">
       <div class="form-title">Add New Venue</div>
@@ -674,6 +798,7 @@ header{
   <div id="page-organizers" class="page">
     <div class="section-header">
       <h2 class="section-title">MANAGE <span>ORGANIZERS</span></h2>
+      <div class="search-wrap"><span class="search-icon">🔍</span><input id="search-organizers" placeholder="Search organizers..." oninput="filterCards('organizers-grid','search-organizers')"/></div>
     </div>
     <div class="form-card">
       <div class="form-title">Add New Organizer</div>
@@ -708,6 +833,7 @@ header{
   <div id="page-staff" class="page">
     <div class="section-header">
       <h2 class="section-title">MANAGE <span>STAFF</span></h2>
+      <div class="search-wrap"><span class="search-icon">🔍</span><input id="search-staff" placeholder="Search staff..." oninput="filterCards('staff-grid','search-staff')"/></div>
     </div>
     <div class="form-card">
       <div class="form-title">Add Staff Member</div>
@@ -801,6 +927,7 @@ header{
   <div id="page-waitlist" class="page">
     <div class="section-header">
       <h2 class="section-title">MANAGE <span>WAITLIST</span></h2>
+      <div class="search-wrap"><span class="search-icon">🔍</span><input id="search-waitlist" placeholder="Search waitlist..." oninput="filterTable('waitlist-body','search-waitlist',7)"/></div>
     </div>
     <div class="form-card">
       <div class="form-title">Add to Waitlist</div>
@@ -962,7 +1089,6 @@ header{
     </div>
   </div>
 
-
 </main>
 
 <!-- SEAT MAP MODAL -->
@@ -971,7 +1097,7 @@ header{
     <div class="modal-header">
       <div>
         <div class="modal-title" id="modal-event-name">Select Your Seat</div>
-        <div style="font-size:.8rem;color:var(--muted);margin-top:2px">Grey = already booked</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-top:2px" id="modal-cat-hint">Grey = already booked · Dashed = other category</div>
       </div>
       <button class="modal-close" onclick="closeSeatMap()">✕</button>
     </div>
@@ -980,6 +1106,7 @@ header{
         <div class="legend-item"><div class="legend-dot" style="background:var(--surface);border:1px solid var(--border)"></div>Available</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Selected</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--border);opacity:.5"></div>Booked</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--surface);border:1px dashed var(--border);opacity:.4"></div>Other Category</div>
       </div>
       <div id="seat-map-content"></div>
       <div style="margin-top:1.5rem;display:flex;gap:.75rem">
@@ -1039,14 +1166,19 @@ async function api(path, opts) {
 async function loadStats() {
   try {
     const r = await fetch(API + '/stats');
+    if (!r.ok) throw new Error('Stats fetch failed: ' + r.status);
     const d = await r.json();
-    document.getElementById('st-total').textContent = d.total ?? '—';
-    document.getElementById('st-paid').textContent = d.paid ?? '—';
-    document.getElementById('st-revenue').textContent = d.revenue ? (d.revenue / 1000).toFixed(1) + 'K' : '0';
-    document.getElementById('st-events').textContent = d.events ?? '—';
+    document.getElementById('st-total').textContent    = d.total    ?? '—';
+    document.getElementById('st-paid').textContent     = d.paid     ?? '—';
+    document.getElementById('st-events').textContent   = d.events   ?? '—';
     document.getElementById('st-waitlist').textContent = d.waitlist ?? '—';
-    if (d.categories !== undefined) document.getElementById('st-categories') && (document.getElementById('st-categories').textContent = d.categories);
-  } catch { }
+    const rev = Number(d.revenue) || 0;
+    document.getElementById('st-revenue').textContent =
+      rev >= 1000000 ? (rev / 1000000).toFixed(1) + 'M' :
+      rev >= 1000    ? (rev / 1000).toFixed(1) + 'K' : String(rev);
+  } catch (err) {
+    console.error('loadStats error:', err);
+  }
 }
 
 // ── DROPDOWNS ─────────────────────────────────────
@@ -1065,7 +1197,6 @@ async function loadDropdowns() {
     staff      = await sr.json().catch(() => []);
     discounts  = await dr.json().catch(() => []);
 
-    // Clear all dropdowns before refilling to prevent duplicates
     document.getElementById('b-cat').innerHTML      = '<option value="">— Select category —</option>';
     document.getElementById('b-event').innerHTML    = '<option value="">— Select event —</option>';
     document.getElementById('w-event').innerHTML    = '<option value="">— Select event —</option>';
@@ -1075,7 +1206,6 @@ async function loadDropdowns() {
     document.getElementById('b-discount').innerHTML = '<option value="">— No discount —</option>';
     document.getElementById('w-user').innerHTML     = '<option value="">— Select user —</option>';
 
-    // Categories
     const cSel = document.getElementById('b-cat');
     categories.forEach(c => {
       const o = document.createElement('option');
@@ -1083,7 +1213,6 @@ async function loadDropdowns() {
       o.dataset.price = c.price; cSel.appendChild(o);
     });
 
-    // Events (booking + waitlist)
     ['b-event', 'w-event'].forEach(id => {
       const sel = document.getElementById(id);
       events.forEach(e => {
@@ -1092,14 +1221,12 @@ async function loadDropdowns() {
       });
     });
 
-    // Categories for waitlist
     const wCat = document.getElementById('w-cat');
     categories.forEach(c => {
       const o = document.createElement('option');
       o.value = c.id; o.textContent = c.name; wCat.appendChild(o);
     });
 
-    // Staff (booking + cancellation)
     ['b-staff', 'c-staff'].forEach(id => {
       const sel = document.getElementById(id);
       staff.forEach(s => {
@@ -1108,7 +1235,6 @@ async function loadDropdowns() {
       });
     });
 
-    // Discounts
     const dSel = document.getElementById('b-discount');
     discounts.filter(d => d.isActive).forEach(d => {
       const o = document.createElement('option');
@@ -1117,14 +1243,12 @@ async function loadDropdowns() {
       dSel.appendChild(o);
     });
 
-    // Users for waitlist
     const wUser = document.getElementById('w-user');
     users.forEach(u => {
       const o = document.createElement('option');
       o.value = u.id; o.textContent = `${u.name} (UID-${u.id})`; wUser.appendChild(o);
     });
 
-    // Venues + Organizers for event form
     await refreshVenueOrgDropdowns();
 
   } catch(e) { console.error(e); }
@@ -1166,20 +1290,62 @@ function updatePriceDisplay() {
     ? `PKR ${Number(final).toLocaleString()} (${pct}% off)`
     : `PKR ${Number(final).toLocaleString()}`;
 }
-function onCatChange()      { updatePriceDisplay(); }
+function onCatChange() {
+  updatePriceDisplay();
+  // FIX 1: clear seat when category changes — old seat may be wrong section
+  document.getElementById('b-seat').value = '';
+  selectedSeat = null;
+}
 function onDiscountChange() { updatePriceDisplay(); }
 
 function onEventChange() {
   document.getElementById('b-seat').value = '';
   selectedSeat = null; bookedSeats = [];
-  // seat-map-btn always enabled
 }
 
-// ── SEAT MAP ──────────────────────────────────────
+// ─────────────────────────────────────────────────
+// FIX 1 — SEAT MAP: only allow seats in the selected category's section
+// Each section maps to a category name (case-insensitive match).
+// Seats in other sections are rendered as .locked (dashed, not clickable).
+// ─────────────────────────────────────────────────
+function buildSeatSections(totalSeats) {
+  totalSeats = Math.max(totalSeats || 100, 9);
+  const vipCount     = Math.round(totalSeats * 0.20);
+  const regularCount = Math.round(totalSeats * 0.40);
+  const economyCount = totalSeats - vipCount - regularCount;
+
+  function makeSection(count, startCode, label, catName) {
+    const cols = Math.min(20, Math.max(5, Math.ceil(Math.sqrt(count))));
+    const numRows = Math.ceil(count / cols);
+    const rows = [];
+    for (let i = 0; i < numRows; i++) rows.push(String.fromCharCode(startCode + i));
+    return { name: label, rows, cols, cat: catName };
+  }
+
+  const vipSec     = makeSection(vipCount,     65, 'VIP SECTION',     'VIP');
+  const regularSec = makeSection(regularCount, 65 + vipSec.rows.length,     'REGULAR SECTION', 'Regular');
+  const economySec = makeSection(economyCount, 65 + vipSec.rows.length + regularSec.rows.length, 'ECONOMY SECTION', 'Economy');
+  return [vipSec, regularSec, economySec];
+}
+
 async function openSeatMap() {
   const eid = document.getElementById('b-event').value;
   const ev = eid ? events.find(e => e.id == eid) : null;
   document.getElementById('modal-event-name').textContent = ev?.name || 'Seat Map';
+  const totalSeats = ev ? (ev.seats || ev.totalSeats || 100) : 100;
+
+  // Get selected category name
+  const cSel = document.getElementById('b-cat');
+  const cOpt = cSel.options[cSel.selectedIndex];
+  const selCatName = cOpt && cOpt.value ? cOpt.textContent.split(' —')[0].trim() : null;
+  if (selCatName) {
+    document.getElementById('modal-cat-hint').textContent =
+      `Showing: ${selCatName} section only · Grey = booked · Dashed = other category`;
+  } else {
+    document.getElementById('modal-cat-hint').textContent =
+      'Select a category first to highlight your section';
+  }
+
   bookedSeats = [];
   if (eid) {
     try {
@@ -1187,33 +1353,53 @@ async function openSeatMap() {
       if (r.ok) bookedSeats = await r.json();
     } catch (_) {}
   }
-  buildSeatMap();
+  buildSeatMap(selCatName, totalSeats);
   document.getElementById('seat-modal').classList.add('open');
 }
 
-function buildSeatMap() {
-  const sections = [
-    { name: 'VIP SECTION', rows: ['A', 'B'], cols: 12, cat: 'VIP', price: '' },
-    { name: 'REGULAR SECTION', rows: ['C', 'D', 'E', 'F'], cols: 14, cat: 'Regular', price: '' },
-    { name: 'ECONOMY SECTION', rows: ['G', 'H', 'I', 'J'], cols: 16, cat: 'Economy', price: '' },
-  ];
-  categories.forEach(c => {
-    const s = sections.find(s => s.cat === c.name);
-    if (s) s.price = `PKR ${Number(c.price).toLocaleString()} / SEAT`;
+function buildSeatMap(selectedCategoryName, totalSeats) {
+  // Build dynamic sections based on event's total seats
+  const SEAT_SECTIONS = buildSeatSections(totalSeats);
+  // Update prices from categories data
+  const sectionsWithPrices = SEAT_SECTIONS.map(sec => {
+    const cat = categories.find(c => c.name.toLowerCase() === sec.cat.toLowerCase());
+    return { ...sec, price: cat ? `PKR ${Number(cat.price).toLocaleString()} / SEAT` : '' };
   });
+
   let html = '';
-  sections.forEach(sec => {
+  sectionsWithPrices.forEach(sec => {
+    // Determine if this section matches the selected category
+    const isActiveSection = selectedCategoryName
+      ? sec.cat.toLowerCase() === selectedCategoryName.toLowerCase()
+      : true; // no category selected → show all as selectable
+
     html += `<div class="seat-section">
-      <div class="seat-section-title">${sec.name} &nbsp; <span style="color:var(--muted);font-size:.7rem">${sec.price}</span></div>`;
+      <div class="seat-section-title">${sec.name} &nbsp;
+        <span style="color:var(--muted);font-size:.7rem">${sec.price}</span>
+        ${isActiveSection && selectedCategoryName
+          ? '<span style="color:var(--green);font-size:.7rem;margin-left:8px">✔ Your Section</span>'
+          : (!selectedCategoryName ? '' : '<span style="color:var(--muted);font-size:.7rem;margin-left:8px">— Other Category</span>')}
+      </div>`;
     sec.rows.forEach(row => {
       html += `<div class="seat-label">${row}</div><div class="seats-row">`;
       for (let c = 1; c <= sec.cols; c++) {
         const seatId = `${row}${c}`;
         const isBooked = bookedSeats.includes(seatId);
-        const isSel = selectedSeat === seatId;
-        html += `<button class="seat${isBooked?' booked':''}${isSel?' selected':''}"
-          onclick="selectSeat('${seatId}',this)"
-          ${isBooked?'disabled':''}>${c}</button>`;
+        const isSel    = selectedSeat === seatId;
+        // FIX 1 CORE: if there's an active section and this seat is NOT in it → locked
+        const isLocked = selectedCategoryName && !isActiveSection;
+
+        let cls = 'seat';
+        if (isBooked)      cls += ' booked';
+        else if (isSel)    cls += ' selected';
+        else if (isLocked) cls += ' locked';
+
+        const disabled = isBooked || isLocked;
+        html += `<button class="${cls}"
+          onclick="${disabled ? '' : `selectSeat('${seatId}',this)`}"
+          ${disabled ? 'disabled' : ''}
+          title="${isLocked ? 'Not available for ' + selectedCategoryName : seatId}"
+          >${c}</button>`;
       }
       html += `</div>`;
     });
@@ -1268,7 +1454,8 @@ async function bookTicket() {
     const d = await r.json();
     if (!r.ok) { toast(d.error || 'Booking failed', 'error'); return; }
     toast(`✅ Seat ${seat} booked successfully!`);
-    resetBookForm(); loadStats();
+    resetBookForm();
+    await loadStats();
   } catch { toast('Connection error — is server.py running?', 'error'); }
 }
 
@@ -1283,7 +1470,6 @@ function resetBookForm() {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('b-bdate').value = today;
   selectedSeat = null;
-  // seat-map-btn stays enabled
 }
 
 // ── TICKETS TABLE ─────────────────────────────────
@@ -1378,7 +1564,7 @@ async function addEvent() {
   ['e-name','e-date'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('e-seats').value = 100;
   loadEvents();
-  // refresh book dropdown
+  loadStats();
   document.getElementById('b-event').innerHTML = '<option value="">— Select event —</option>';
   document.getElementById('w-event').innerHTML = '<option value="">— Select event —</option>';
   const er = await fetch(API + '/events');
@@ -1433,7 +1619,6 @@ async function addUser() {
   toast('User added ✅');
   ['u-name','u-email','u-phone','u-cnic'].forEach(id => document.getElementById(id).value = '');
   loadUsers();
-  // refresh user dropdown
   document.getElementById('w-user').innerHTML = '<option value="">— Select user —</option>';
   const ur = await fetch(API + '/users');
   users = await ur.json().catch(() => []);
@@ -1578,7 +1763,6 @@ async function addStaff() {
   toast('Staff member added ✅');
   ['s-name','s-shift','s-phone','s-email','s-hire'].forEach(id => document.getElementById(id).value = '');
   loadStaff();
-  // refresh staff dropdowns
   document.getElementById('b-staff').innerHTML = '<option value="">— Not assigned —</option>';
   document.getElementById('c-staff').innerHTML = '<option value="">— Select staff —</option>';
   const sr = await fetch(API + '/staff');
@@ -1640,7 +1824,6 @@ async function addDiscount() {
   toast('Discount created ✅');
   ['d-code','d-desc','d-pct','d-from','d-until'].forEach(id => document.getElementById(id).value = '');
   loadDiscounts();
-  // refresh discount dropdown
   document.getElementById('b-discount').innerHTML = '<option value="">— No discount —</option>';
   const dr = await fetch(API + '/discounts');
   discounts = await dr.json().catch(() => []);
@@ -1728,7 +1911,13 @@ async function loadPayments() {
   } catch { tbody.innerHTML = '<tr><td colspan="8" class="no-data">⚠️ Cannot reach server.</td></tr>'; }
 }
 
-// ── CANCELLATIONS ─────────────────────────────────
+// ─────────────────────────────────────────────────
+// FIX 2 — CANCELLATIONS:
+//   1. Check ticket exists BEFORE inserting cancellation record
+//   2. Check ticket not ALREADY cancelled (no existing cancellation for this TicketID)
+//   3. Only then insert cancellation + delete ticket
+//   4. FIX 3: reload stats + tickets after cancellation so navbar updates
+// ─────────────────────────────────────────────────
 async function loadCancellations() {
   const tbody = document.getElementById('cancellations-body');
   tbody.innerHTML = '<tr><td colspan="9" class="no-data"><div class="spinner"></div></td></tr>';
@@ -1752,31 +1941,45 @@ async function loadCancellations() {
 }
 
 async function addCancellation() {
-  const ticketId     = document.getElementById('c-ticket').value;
+  const ticketId     = document.getElementById('c-ticket').value.trim();
   const reason       = document.getElementById('c-reason').value.trim();
   const cancelDate   = document.getElementById('c-date').value;
   const refundStatus = document.getElementById('c-refund').value;
   const refundAmount = document.getElementById('c-amount').value;
   const staffId      = document.getElementById('c-staff').value;
-  if (!ticketId) { toast('Ticket ID required', 'error'); return; }
+
+  if (!ticketId) { toast('Ticket ID is required', 'error'); return; }
 
   const r = await fetch(API + '/cancellations', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      ticketId: +ticketId, reason, cancelDate, refundStatus,
+      ticketId:     +ticketId,
+      reason,
+      cancelDate,
+      refundStatus,
       refundAmount: refundAmount ? +refundAmount : 0,
-      processedBy: staffId ? +staffId : null
+      processedBy:  staffId ? +staffId : null
     })
   });
-  if (!r.ok) { const d = await r.json(); toast(d.error || 'Failed', 'error'); return; }
 
-  // Delete ticket — frees seat, removes from tickets tab
-  await fetch(API + '/tickets/' + ticketId, { method: 'DELETE' });
-  bookedSeats = [];
+  const result = await r.json().catch(() => ({}));
+  if (!r.ok) { toast(result.error || 'Failed to record cancellation', 'error'); return; }
 
-  toast('Cancellation processed ✅ — ticket removed, seat freed');
+  if (result.ticketDeleted) {
+    toast(`✅ TKT-${ticketId} refunded — ticket removed & revenue updated`);
+  } else {
+    toast(`📋 TKT-${ticketId} cancellation recorded as ${refundStatus} — ticket still active`);
+  }
+
   ['c-ticket','c-reason','c-date','c-amount'].forEach(id => document.getElementById(id).value = '');
-  loadCancellations(); loadTickets(); loadPayments(); loadStats();
+  document.getElementById('c-refund').selectedIndex = 0;
+  document.getElementById('c-staff').selectedIndex  = 0;
+  document.getElementById('c-date').value = new Date().toISOString().split('T')[0];
+
+  await loadStats();
+  loadCancellations();
+  loadTickets();
+  loadPayments();
 }
 
 // ── CATEGORIES ───────────────────────────────────
@@ -1811,7 +2014,6 @@ async function addCategory() {
   toast('Category added ✅');
   ['cat-name','cat-price'].forEach(id => document.getElementById(id).value = '');
   loadCategories();
-  // refresh category dropdowns
   document.getElementById('b-cat').innerHTML = '<option value="">— Select category —</option>';
   document.getElementById('w-cat').innerHTML = '<option value="">— Select category —</option>';
   const cr = await fetch(API + '/categories');
@@ -1859,10 +2061,9 @@ function goSlide(n) {
   slides[currentSlide].classList.add('active');
   dots[currentSlide].classList.add('active');
   document.getElementById('hero-slides').style.transform = `translateX(-${currentSlide * 100}%)`;
-  // Re-trigger content animation
   const content = slides[currentSlide].querySelector('.slide-content');
   content.style.animation = 'none';
-  content.offsetHeight; // reflow
+  content.offsetHeight;
   content.style.animation = '';
 }
 
@@ -1885,10 +2086,72 @@ function toggleTheme() {
   localStorage.setItem('theme', isLight ? 'light' : 'dark');
 }
 
-// Restore saved theme
 if (localStorage.getItem('theme') === 'light') {
   document.body.classList.add('light');
   document.getElementById('theme-label').textContent = '☀️ Light';
+}
+
+// ── LOGIN ─────────────────────────────────────────
+const USERS = [
+  { username: 'maty',   password: 'test1234', role: 'Admin'  },
+  
+];
+
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  const match = USERS.find(x => x.username === u && x.password === p);
+  if (!match) {
+    errEl.classList.add('show');
+    document.getElementById('login-pass').value = '';
+    return;
+  }
+  errEl.classList.remove('show');
+  sessionStorage.setItem('tv_user', JSON.stringify({ username: match.username, role: match.role }));
+  document.getElementById('login-screen').classList.add('hidden');
+  setTimeout(() => { document.getElementById('login-screen').style.display = 'none'; }, 420);
+  toast(`Welcome back, ${match.username}! 👋`);
+}
+
+function doLogout() {
+  sessionStorage.removeItem('tv_user');
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').classList.remove('show');
+  const ls = document.getElementById('login-screen');
+  ls.style.display = 'flex';
+  setTimeout(() => ls.classList.remove('hidden'), 10);
+}
+
+// Enter key support on login fields
+['login-user','login-pass'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+});
+
+// Check session on load
+(function() {
+  const sess = sessionStorage.getItem('tv_user');
+  if (sess) {
+    document.getElementById('login-screen').style.display = 'none';
+  }
+})();
+
+// ── SEARCH FILTERS ────────────────────────────────
+function filterTable(tbodyId, inputId, cols) {
+  const q = document.getElementById(inputId).value.toLowerCase();
+  const rows = document.getElementById(tbodyId).querySelectorAll('tr');
+  rows.forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function filterCards(gridId, inputId) {
+  const q = document.getElementById(inputId).value.toLowerCase();
+  const cards = document.getElementById(gridId).children;
+  Array.from(cards).forEach(card => {
+    card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
 }
 </script>
 </body>
