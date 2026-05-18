@@ -1,275 +1,218 @@
--- ═══════════════════════════════════════════════════════
---   TicketVault DB · ERD MATCHED VERSION (11 TABLES)
--- ═══════════════════════════════════════════════════════
+-- schema_fix.sql
+-- VS Code PostgreSQL / Supabase Ready
 
-IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'TicketBookingDB')
-    CREATE DATABASE TicketBookingDB;
+BEGIN;
 
-USE TicketBookingDB;
-
--- ═══════════════════════════════════════════════════════
--- ORGANIZERS
--- ═══════════════════════════════════════════════════════
-CREATE TABLE Organizers (
-    OrganizerID INT IDENTITY PRIMARY KEY,
-    OrganizerName VARCHAR(100),
-    ContactEmail VARCHAR(100),
-    Phone VARCHAR(15),
-    Organization VARCHAR(100)
-);
-
--- ═══════════════════════════════════════════════════════
--- VENUES
--- ═══════════════════════════════════════════════════════
-CREATE TABLE Venues (
-    VenueID INT IDENTITY PRIMARY KEY,
-    VenueName VARCHAR(100),
-    City VARCHAR(50),
-    Address VARCHAR(150),
-    Capacity INT CHECK (Capacity > 0)
-);
-
--- ═══════════════════════════════════════════════════════
 -- USERS
--- ═══════════════════════════════════════════════════════
-CREATE TABLE Users (
-    UserID INT IDENTITY PRIMARY KEY,
-    UserName VARCHAR(100),
-    Email VARCHAR(100) UNIQUE,
-    Phone VARCHAR(15),
-    CNIC VARCHAR(15) UNIQUE,
-    CreatedAt DATETIME DEFAULT GETDATE()
-);
+ALTER TABLE "Users"
+ADD COLUMN IF NOT EXISTS "CNIC" TEXT UNIQUE;
 
--- ═══════════════════════════════════════════════════════
--- STAFF
--- ═══════════════════════════════════════════════════════
-CREATE TABLE Staff (
-    StaffID INT IDENTITY PRIMARY KEY,
-    StaffName VARCHAR(100),
-    Role VARCHAR(50),
-    ShiftTime VARCHAR(50),
-    Phone VARCHAR(15),
-    Email VARCHAR(100),
-    HireDate DATE
-);
-
--- ═══════════════════════════════════════════════════════
 -- EVENTS
--- ═══════════════════════════════════════════════════════
-CREATE TABLE Events (
-    EventID INT IDENTITY PRIMARY KEY,
-    EventName VARCHAR(100),
-    EventDate DATE,
-    VenueID INT,
-    OrganizerID INT,
-    TotalSeats INT CHECK (TotalSeats > 0),
-    EventType VARCHAR(50),
+ALTER TABLE "Events"
+ADD COLUMN IF NOT EXISTS "EventType" TEXT,
+ADD COLUMN IF NOT EXISTS "VenueID" BIGINT,
+ADD COLUMN IF NOT EXISTS "OrganizerID" BIGINT;
 
-    FOREIGN KEY (VenueID) REFERENCES Venues(VenueID),
-    FOREIGN KEY (OrganizerID) REFERENCES Organizers(OrganizerID)
-);
+ALTER TABLE "Events"
+ALTER COLUMN "Location" DROP NOT NULL;
 
--- ═══════════════════════════════════════════════════════
+-- VENUES
+ALTER TABLE "Venues"
+ADD COLUMN IF NOT EXISTS "VenueName" TEXT,
+ADD COLUMN IF NOT EXISTS "City" TEXT,
+ADD COLUMN IF NOT EXISTS "Address" TEXT,
+ADD COLUMN IF NOT EXISTS "Capacity" INT;
+
+-- ORGANIZERS
+ALTER TABLE "Organizers"
+ADD COLUMN IF NOT EXISTS "OrganizerName" TEXT,
+ADD COLUMN IF NOT EXISTS "ContactEmail" TEXT,
+ADD COLUMN IF NOT EXISTS "Phone" TEXT,
+ADD COLUMN IF NOT EXISTS "Organization" TEXT;
+
+-- STAFF
+ALTER TABLE "Staff"
+ADD COLUMN IF NOT EXISTS "StaffName" TEXT,
+ADD COLUMN IF NOT EXISTS "Role" TEXT,
+ADD COLUMN IF NOT EXISTS "ShiftTime" TEXT,
+ADD COLUMN IF NOT EXISTS "Phone" TEXT,
+ADD COLUMN IF NOT EXISTS "Email" TEXT,
+ADD COLUMN IF NOT EXISTS "HireDate" DATE;
+
 -- CATEGORIES
--- ═══════════════════════════════════════════════════════
-CREATE TABLE Categories (
-    CategoryID INT IDENTITY PRIMARY KEY,
-    CategoryName VARCHAR(50),
-    Price DECIMAL(10,2)
-);
+ALTER TABLE "Categories"
+ADD COLUMN IF NOT EXISTS "CategoryName" TEXT,
+ADD COLUMN IF NOT EXISTS "Price" NUMERIC;
 
--- ═══════════════════════════════════════════════════════
 -- DISCOUNTS
--- ═══════════════════════════════════════════════════════
-CREATE TABLE Discounts (
-    DiscountID INT IDENTITY PRIMARY KEY,
-    Code VARCHAR(20),
-    Description VARCHAR(100),
-    Percentage DECIMAL(5,2),
-    ValidFrom DATE,
-    ValidUntil DATE,
-    IsActive BIT,
+ALTER TABLE "Discounts"
+ADD COLUMN IF NOT EXISTS "Code" TEXT,
+ADD COLUMN IF NOT EXISTS "Description" TEXT,
+ADD COLUMN IF NOT EXISTS "Percentage" NUMERIC,
+ADD COLUMN IF NOT EXISTS "ValidFrom" DATE,
+ADD COLUMN IF NOT EXISTS "ValidUntil" DATE,
+ADD COLUMN IF NOT EXISTS "IsActive" BOOLEAN DEFAULT TRUE;
 
-    CHECK (ValidUntil >= ValidFrom)
-);
+-- EVENTTICKETS
+ALTER TABLE "EventTickets"
+ADD COLUMN IF NOT EXISTS "EventID" BIGINT,
+ADD COLUMN IF NOT EXISTS "UserID" BIGINT,
+ADD COLUMN IF NOT EXISTS "CategoryID" BIGINT,
+ADD COLUMN IF NOT EXISTS "StaffID" BIGINT,
+ADD COLUMN IF NOT EXISTS "DiscountID" BIGINT,
+ADD COLUMN IF NOT EXISTS "SeatNo" TEXT,
+ADD COLUMN IF NOT EXISTS "BookingDate" DATE DEFAULT CURRENT_DATE,
+ADD COLUMN IF NOT EXISTS "PaymentStatus" TEXT;
 
--- ═══════════════════════════════════════════════════════
--- EVENT TICKETS
--- ═══════════════════════════════════════════════════════
-CREATE TABLE EventTickets (
-    TicketID INT IDENTITY PRIMARY KEY,
-    EventID INT,
-    UserID INT,
-    CategoryID INT,
-    StaffID INT,
-    DiscountID INT,
-    SeatNo VARCHAR(10),
-    BookingDate DATE DEFAULT GETDATE(),
-    PaymentStatus VARCHAR(20),
-
-    FOREIGN KEY (EventID) REFERENCES Events(EventID),
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
-    FOREIGN KEY (StaffID) REFERENCES Staff(StaffID),
-    FOREIGN KEY (DiscountID) REFERENCES Discounts(DiscountID),
-
-    CONSTRAINT UQ_Seat UNIQUE (EventID, SeatNo)
-);
-
--- ═══════════════════════════════════════════════════════
 -- WAITLIST
--- ═══════════════════════════════════════════════════════
-CREATE TABLE Waitlist (
-    WaitlistID INT IDENTITY PRIMARY KEY,
-    EventID INT,
-    UserID INT,
-    CategoryID INT,
-    RequestDate DATE DEFAULT GETDATE(),
-    Status VARCHAR(20),
+ALTER TABLE "Waitlist"
+ADD COLUMN IF NOT EXISTS "EventID" BIGINT,
+ADD COLUMN IF NOT EXISTS "UserID" BIGINT,
+ADD COLUMN IF NOT EXISTS "CategoryID" BIGINT,
+ADD COLUMN IF NOT EXISTS "RequestDate" DATE DEFAULT CURRENT_DATE,
+ADD COLUMN IF NOT EXISTS "Status" TEXT;
 
-    FOREIGN KEY (EventID) REFERENCES Events(EventID),
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
-
-    CHECK (Status IN ('Waiting','Confirmed','Cancelled'))
-);
-
--- ═══════════════════════════════════════════════════════
 -- PAYMENTS
--- ═══════════════════════════════════════════════════════
-CREATE TABLE Payments (
-    PaymentID INT IDENTITY PRIMARY KEY,
-    TicketID INT UNIQUE,
-    Amount DECIMAL(10,2),
-    PaymentMethod VARCHAR(20),
-    TransactionDate DATETIME DEFAULT GETDATE(),
-    Status VARCHAR(20),
-    TransactionRef VARCHAR(50),
+ALTER TABLE "Payments"
+ADD COLUMN IF NOT EXISTS "TicketID" BIGINT,
+ADD COLUMN IF NOT EXISTS "Amount" NUMERIC,
+ADD COLUMN IF NOT EXISTS "PaymentMethod" TEXT,
+ADD COLUMN IF NOT EXISTS "TransactionDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN IF NOT EXISTS "Status" TEXT,
+ADD COLUMN IF NOT EXISTS "TransactionRef" TEXT;
 
-    FOREIGN KEY (TicketID) REFERENCES EventTickets(TicketID)
-);
-
--- ═══════════════════════════════════════════════════════
 -- CANCELLATIONS
--- ═══════════════════════════════════════════════════════
-CREATE TABLE Cancellations (
-    CancellationID INT IDENTITY PRIMARY KEY,
-    TicketID INT,
-    Reason VARCHAR(100),
-    CancelDate DATE DEFAULT GETDATE(),
-    RefundStatus VARCHAR(20),
-    RefundAmount DECIMAL(10,2),
-    ProcessedBy INT,
+ALTER TABLE "Cancellations"
+ADD COLUMN IF NOT EXISTS "TicketID" BIGINT,
+ADD COLUMN IF NOT EXISTS "Reason" TEXT,
+ADD COLUMN IF NOT EXISTS "CancelDate" DATE DEFAULT CURRENT_DATE,
+ADD COLUMN IF NOT EXISTS "RefundStatus" TEXT,
+ADD COLUMN IF NOT EXISTS "RefundAmount" NUMERIC,
+ADD COLUMN IF NOT EXISTS "ProcessedBy" BIGINT;
 
-    FOREIGN KEY (TicketID) REFERENCES EventTickets(TicketID),
-    FOREIGN KEY (ProcessedBy) REFERENCES Staff(StaffID)
-);
-
--- ═══════════════════════════════════════════════════════
--- STORED PROCEDURE (UPDATED)
--- ═══════════════════════════════════════════════════════
-GO
-CREATE PROCEDURE BookTicket
-    @UserID INT,
-    @EventID INT,
-    @CategoryID INT,
-    @SeatNo VARCHAR(10),
-    @PaymentMethod VARCHAR(20)
-AS
+-- FOREIGN KEYS
+DO $$
 BEGIN
-    SET NOCOUNT ON;
 
-    DECLARE @Price DECIMAL(10,2);
-    DECLARE @TicketID INT;
+IF NOT EXISTS (
+SELECT 1 FROM information_schema.table_constraints
+WHERE constraint_name = 'fk_events_venue'
+) THEN
+ALTER TABLE "Events"
+ADD CONSTRAINT fk_events_venue
+FOREIGN KEY ("VenueID") REFERENCES "Venues"("VenueID");
+END IF;
 
-    BEGIN TRY
-        BEGIN TRANSACTION;
+IF NOT EXISTS (
+SELECT 1 FROM information_schema.table_constraints
+WHERE constraint_name = 'fk_events_organizer'
+) THEN
+ALTER TABLE "Events"
+ADD CONSTRAINT fk_events_organizer
+FOREIGN KEY ("OrganizerID") REFERENCES "Organizers"("OrganizerID");
+END IF;
 
-        -- Seat check
-        IF EXISTS (SELECT 1 FROM EventTickets WHERE EventID=@EventID AND SeatNo=@SeatNo)
-        BEGIN
-            RAISERROR('Seat already booked',16,1);
-            ROLLBACK; RETURN;
-        END
+IF NOT EXISTS (
+SELECT 1 FROM information_schema.table_constraints
+WHERE constraint_name = 'fk_tickets_event'
+) THEN
+ALTER TABLE "EventTickets"
+ADD CONSTRAINT fk_tickets_event
+FOREIGN KEY ("EventID") REFERENCES "Events"("EventID");
+END IF;
 
-        -- Get price from category
-        SELECT @Price = Price FROM Categories WHERE CategoryID=@CategoryID;
+IF NOT EXISTS (
+SELECT 1 FROM information_schema.table_constraints
+WHERE constraint_name = 'fk_tickets_user'
+) THEN
+ALTER TABLE "EventTickets"
+ADD CONSTRAINT fk_tickets_user
+FOREIGN KEY ("UserID") REFERENCES "Users"("UserID");
+END IF;
 
-        -- Insert ticket
-        INSERT INTO EventTickets(EventID,UserID,CategoryID,SeatNo,PaymentStatus)
-        VALUES(@EventID,@UserID,@CategoryID,@SeatNo,'Paid');
+IF NOT EXISTS (
+SELECT 1 FROM information_schema.table_constraints
+WHERE constraint_name = 'fk_tickets_category'
+) THEN
+ALTER TABLE "EventTickets"
+ADD CONSTRAINT fk_tickets_category
+FOREIGN KEY ("CategoryID") REFERENCES "Categories"("CategoryID");
+END IF;
 
-        SET @TicketID = SCOPE_IDENTITY();
+IF NOT EXISTS (
+SELECT 1 FROM information_schema.table_constraints
+WHERE constraint_name = 'fk_tickets_staff'
+) THEN
+ALTER TABLE "EventTickets"
+ADD CONSTRAINT fk_tickets_staff
+FOREIGN KEY ("StaffID") REFERENCES "Staff"("StaffID");
+END IF;
 
-        -- Payment
-        INSERT INTO Payments(TicketID,Amount,PaymentMethod,Status)
-        VALUES(@TicketID,@Price,@PaymentMethod,'Paid');
+IF NOT EXISTS (
+SELECT 1 FROM information_schema.table_constraints
+WHERE constraint_name = 'fk_tickets_discount'
+) THEN
+ALTER TABLE "EventTickets"
+ADD CONSTRAINT fk_tickets_discount
+FOREIGN KEY ("DiscountID") REFERENCES "Discounts"("DiscountID");
+END IF;
 
-        COMMIT;
-    END TRY
-    BEGIN CATCH
-        ROLLBACK;
-        PRINT ERROR_MESSAGE();
-    END CATCH
-END;
-GO
+IF NOT EXISTS (
+SELECT 1 FROM information_schema.table_constraints
+WHERE constraint_name = 'fk_payments_ticket'
+) THEN
+ALTER TABLE "Payments"
+ADD CONSTRAINT fk_payments_ticket
+FOREIGN KEY ("TicketID") REFERENCES "EventTickets"("TicketID");
+END IF;
 
--- ═══════════════════════════════════════════════════════
--- TRIGGER: BLOCK OVERBOOKING
--- ═══════════════════════════════════════════════════════
-GO
-CREATE TRIGGER trg_BlockOverbooking
-ON EventTickets
-AFTER INSERT
-AS
-BEGIN
-    DECLARE @EventID INT;
-    SELECT @EventID = EventID FROM inserted;
+IF NOT EXISTS (
+SELECT 1 FROM information_schema.table_constraints
+WHERE constraint_name = 'fk_cancellations_ticket'
+) THEN
+ALTER TABLE "Cancellations"
+ADD CONSTRAINT fk_cancellations_ticket
+FOREIGN KEY ("TicketID") REFERENCES "EventTickets"("TicketID");
+END IF;
 
-    DECLARE @Total INT = (SELECT TotalSeats FROM Events WHERE EventID=@EventID);
-    DECLARE @Count INT = (SELECT COUNT(*) FROM EventTickets WHERE EventID=@EventID);
+IF NOT EXISTS (
+SELECT 1 FROM information_schema.table_constraints
+WHERE constraint_name = 'fk_cancellations_staff'
+) THEN
+ALTER TABLE "Cancellations"
+ADD CONSTRAINT fk_cancellations_staff
+FOREIGN KEY ("ProcessedBy") REFERENCES "Staff"("StaffID");
+END IF;
 
-    IF @Count > @Total
-    BEGIN
-        RAISERROR('Event full!',16,1);
-        ROLLBACK TRANSACTION;
-    END
-END;
-GO
+IF NOT EXISTS (
+SELECT 1 FROM information_schema.table_constraints
+WHERE constraint_name = 'fk_waitlist_event'
+) THEN
+ALTER TABLE "Waitlist"
+ADD CONSTRAINT fk_waitlist_event
+FOREIGN KEY ("EventID") REFERENCES "Events"("EventID");
+END IF;
 
--- ═══════════════════════════════════════════════════════
--- TRIGGER: WAITLIST AUTO MOVE
--- ═══════════════════════════════════════════════════════
-GO
-CREATE TRIGGER trg_WaitlistAuto
-ON EventTickets
-AFTER DELETE
-AS
-BEGIN
-    DECLARE @EventID INT;
-    DECLARE @UserID INT;
-    DECLARE @CategoryID INT;
+IF NOT EXISTS (
+SELECT 1 FROM information_schema.table_constraints
+WHERE constraint_name = 'fk_waitlist_user'
+) THEN
+ALTER TABLE "Waitlist"
+ADD CONSTRAINT fk_waitlist_user
+FOREIGN KEY ("UserID") REFERENCES "Users"("UserID");
+END IF;
 
-    SELECT @EventID = EventID FROM deleted;
+IF NOT EXISTS (
+SELECT 1 FROM information_schema.table_constraints
+WHERE constraint_name = 'fk_waitlist_category'
+) THEN
+ALTER TABLE "Waitlist"
+ADD CONSTRAINT fk_waitlist_category
+FOREIGN KEY ("CategoryID") REFERENCES "Categories"("CategoryID");
+END IF;
 
-    IF (SELECT COUNT(*) FROM EventTickets WHERE EventID=@EventID)
-       < (SELECT TotalSeats FROM Events WHERE EventID=@EventID)
-    BEGIN
-        SELECT TOP 1 @UserID=UserID,@CategoryID=CategoryID
-        FROM Waitlist
-        WHERE EventID=@EventID AND Status='Waiting'
-        ORDER BY WaitlistID;
+END $$;
 
-        IF @UserID IS NOT NULL
-        BEGIN
-            INSERT INTO EventTickets(EventID,UserID,CategoryID,SeatNo,PaymentStatus)
-            VALUES(@EventID,@UserID,@CategoryID,CONCAT('WL',@UserID),'Pending');
+NOTIFY pgrst, 'reload schema';
 
-            UPDATE Waitlist
-            SET Status='Confirmed'
-            WHERE UserID=@UserID AND EventID=@EventID;
-        END
-    END
-END;
-GO
+COMMIT;
