@@ -660,11 +660,11 @@ body.light .search-wrap input{color:#111118}
             <th>Ticket ID</th><th>Event</th><th>Attendee</th>
             <th>Category</th><th>Price</th><th>Discount</th><th>Seat</th>
             <th>Booked</th><th>Event Date</th><th>Venue / City</th>
-            <th>Staff</th><th>Status</th><th>Action</th>
+            <th>Staff</th><th>Status</th>
           </tr>
         </thead>
         <tbody id="tickets-body">
-          <tr><td colspan="13" class="no-data"><div class="spinner"></div></td></tr>
+          <tr><td colspan="12" class="no-data"><div class="spinner"></div></td></tr>
         </tbody>
       </table>
     </div>
@@ -1475,12 +1475,12 @@ function resetBookForm() {
 // ── TICKETS TABLE ─────────────────────────────────
 async function loadTickets() {
   const tbody = document.getElementById('tickets-body');
-  tbody.innerHTML = '<tr><td colspan="13" class="no-data"><div class="spinner"></div></td></tr>';
+  tbody.innerHTML = '<tr><td colspan="12" class="no-data"><div class="spinner"></div></td></tr>';
   try {
     const r = await fetch(API + '/tickets');
     const tickets = await r.json();
     if (!tickets.length) {
-      tbody.innerHTML = '<tr><td colspan="13" class="no-data">No tickets booked yet.</td></tr>'; return;
+      tbody.innerHTML = '<tr><td colspan="12" class="no-data">No tickets booked yet.</td></tr>'; return;
     }
     tbody.innerHTML = tickets.map(t => `
       <tr>
@@ -1496,12 +1496,9 @@ async function loadTickets() {
         <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.location || '—'}</td>
         <td>${t.staff || '<span style="color:var(--muted)">—</span>'}</td>
         <td><span class="badge badge-${(t.status||'').toLowerCase()}">${t.status}</span></td>
-        <td style="display:flex;gap:6px;flex-wrap:wrap">
-          ${t.status !== 'Paid' ? `<button class="btn btn-success btn-sm" onclick="markPaid(${t.ticketId})">✔ Paid</button>` : '<span style="color:var(--green);font-size:.8rem">✔ Paid</span>'}
-        </td>
       </tr>`).join('');
   } catch {
-    tbody.innerHTML = '<tr><td colspan="13" class="no-data">⚠️ Cannot reach server. Is server.py running?</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="12" class="no-data">⚠️ Cannot reach server. Is server.py running?</td></tr>';
   }
 }
 

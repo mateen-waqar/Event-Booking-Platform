@@ -118,6 +118,15 @@ def add_event():
 @app.route("/api/events/<int:eid>", methods=["DELETE"])
 def delete_event(eid):
     try:
+        # Cascade delete tickets
+        tickets_res = supabase.table("EventTickets").select("TicketID").eq("EventID", eid).execute()
+        t_ids = [r["TicketID"] for r in tickets_res.data]
+        if t_ids:
+            supabase.table("Payments").delete().in_("TicketID", t_ids).execute()
+            supabase.table("Cancellations").delete().in_("TicketID", t_ids).execute()
+            supabase.table("EventTickets").delete().eq("EventID", eid).execute()
+            
+        supabase.table("Waitlist").delete().eq("EventID", eid).execute()
         supabase.table("Events").delete().eq("EventID", eid).execute()
         return jsonify({"message": "Event deleted"})
     except Exception as e:
@@ -392,24 +401,35 @@ def get_tickets():
         res = supabase.table("EventTickets").select("*").execute()
 
         # Build lookup maps to avoid nested FK join issues
-        events_map = {r["EventID"]: r for r in supabase.table("Events").select("EventID, EventName, EventDate").execute().data}
+        events_map = {r["EventID"]: r for r in supabase.table("Events").select("EventID, EventName, EventDate, VenueID").execute().data}
         users_map  = {r["UserID"]:  r for r in supabase.table("Users").select("UserID, UserName").execute().data}
         cats_map   = {r["CategoryID"]: r for r in supabase.table("Categories").select("CategoryID, CategoryName, Price").execute().data}
         staff_map  = {r["StaffID"]:  r for r in supabase.table("Staff").select("StaffID, StaffName").execute().data}
         disc_map   = {r["DiscountID"]: r for r in supabase.table("Discounts").select("DiscountID, Code").execute().data}
+        venues_map = {r["VenueID"]: r for r in supabase.table("Venues").select("VenueID, VenueName, City").execute().data}
 
         tickets = []
         for r in res.data:
+            if r.get("PaymentStatus") == "Refunded":
+                continue
+
             ev   = events_map.get(r.get("EventID"))   or {}
             usr  = users_map.get(r.get("UserID"))     or {}
             cat  = cats_map.get(r.get("CategoryID"))  or {}
             stf  = staff_map.get(r.get("StaffID"))    or {}
             disc = disc_map.get(r.get("DiscountID"))  or {}
+            
+            vid = ev.get("VenueID")
+            ven = venues_map.get(vid) or {}
+            v_name = ven.get("VenueName", "")
+            v_city = ven.get("City", "")
+            location = f"{v_name} / {v_city}".strip(" /")
+
             tickets.append({
                 "ticketId":  r.get("TicketID"),
                 "event":     ev.get("EventName"),
                 "eventDate": ev.get("EventDate"),
-                "location":  None,
+                "location":  location,
                 "user":      usr.get("UserName"),
                 "category":  cat.get("CategoryName"),
                 "price":     cat.get("Price", 0),
@@ -514,9 +534,9 @@ def delete_ticket(tid):
 @app.route("/api/tickets/booked-seats/<int:eid>", methods=["GET"])
 def booked_seats(eid):
     try:
-        res = supabase.table("EventTickets").select("SeatNo") \
+        res = supabase.table("EventTickets").select("SeatNo, PaymentStatus") \
             .eq("EventID", eid).execute()
-        seats = [r["SeatNo"] for r in res.data]
+        seats = [r["SeatNo"] for r in res.data if r.get("SeatNo") and r.get("PaymentStatus") != "Refunded"]
         return jsonify(seats)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -650,29 +670,41 @@ def add_cancellation():
             return jsonify({"error": f"TKT-{ticket_id} not found — already cancelled or never existed"}), 404
         ticket = ticket_res.data[0]
 
-        # ── Guard 2: no duplicate cancellation for same ticket ──
+        # ── Handle existing or new cancellation ──
         dup = supabase.table("Cancellations").select("CancellationID") \
-            .eq("TicketID", ticket_id).execute()
+            .eq("TicketID", ticket_id) \
+            .eq("EventID", ticket.get("EventID")) \
+            .eq("UserID", ticket.get("UserID")).execute()
+            
         if dup.data:
-            return jsonify({"error": f"TKT-{ticket_id} already has a cancellation record"}), 409
+            cancel_id = dup.data[0]["CancellationID"]
+            supabase.table("Cancellations").update({
+                "Reason":       d.get("reason"),
+                "CancelDate":   d.get("cancelDate"),
+                "RefundStatus": refund_status,
+                "RefundAmount": d.get("refundAmount", 0),
+                "ProcessedBy":  d.get("processedBy")
+            }).eq("CancellationID", cancel_id).execute()
+        else:
+            supabase.table("Cancellations").insert({
+                "TicketID":     ticket_id,
+                "UserID":       ticket.get("UserID"),
+                "EventID":      ticket.get("EventID"),
+                "Reason":       d.get("reason"),
+                "CancelDate":   d.get("cancelDate"),
+                "RefundStatus": refund_status,
+                "RefundAmount": d.get("refundAmount", 0),
+                "ProcessedBy":  d.get("processedBy")
+            }).execute()
 
-        # ── Insert cancellation with stored UserID + EventID ──
-        supabase.table("Cancellations").insert({
-            "TicketID":     ticket_id,
-            "UserID":       ticket.get("UserID"),
-            "EventID":      ticket.get("EventID"),
-            "Reason":       d.get("reason"),
-            "CancelDate":   d.get("cancelDate"),
-            "RefundStatus": refund_status,
-            "RefundAmount": d.get("refundAmount", 0),
-            "ProcessedBy":  d.get("processedBy")
-        }).execute()
-
-        # ── Only delete ticket + update payment when Refunded ──
+        # ── Only "delete" ticket (by hiding and freeing seat) + update payment when Refunded ──
         if refund_status == "Refunded":
             supabase.table("Payments").update({"Status": "Refunded"}) \
                 .eq("TicketID", ticket_id).execute()
-            supabase.table("EventTickets").delete().eq("TicketID", ticket_id).execute()
+            supabase.table("EventTickets").update({
+                "PaymentStatus": "Refunded", 
+                "SeatNo": f"REF-{ticket_id}"
+            }).eq("TicketID", ticket_id).execute()
 
         return jsonify({
             "message":       "Cancellation recorded",
