@@ -272,12 +272,6 @@ Contributions are welcome! Please open an issue first to discuss what you'd like
 
 ---
 
-## 📄 License
-
-Distributed under the MIT License. See [`LICENSE`](LICENSE) for more information.
-
----
-
 <div align="center">
 
 Made with ❤️ · [⭐ Star this repo](../../stargazers) if you found it helpful!
