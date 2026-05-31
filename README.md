@@ -12,21 +12,32 @@
 
 [🌐 Live Demo](https://event-booking-platform-amber.vercel.app) · [🐛 Report Bug](../../issues) · [✨ Request Feature](../../issues)
 
+---
+
+### 🔐 Demo Credentials
+
+> Use these to log in on the live demo:
+
+| Field | Value |
+|---|---|
+| **Username** | `maty` |
+| **Password** | `test1234` |
+
 </div>
 
 ---
 
 ## 📋 Table of Contents
 
-- [Overview](#-overview)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Database Schema](#-database-schema)
-- [API Reference](#-api-reference)
-- [Getting Started](#-getting-started)
-- [Environment Variables](#-environment-variables)
-- [Deployment](#-deployment)
-- [Project Structure](#-project-structure)
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Database Schema](#database-schema)
+- [API Reference](#api-reference)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Deployment](#deployment)
+- [Project Structure](#project-structure)
 
 ---
 
@@ -35,6 +46,8 @@
 **TicketVault** is a production-ready event booking platform that handles end-to-end ticket management — from event creation and seat allocation to payments, waitlists, and cancellations. It is deployed live on **Vercel** with a **Supabase** PostgreSQL backend.
 
 The platform supports multiple stakeholders: **organizers** who create events, **staff** who process bookings, and **users** who reserve seats. Built-in business logic handles overbooking prevention and automatic waitlist promotion.
+
+> 🔐 **To try the live demo**, use username `maty` and password `test1234`.
 
 ---
 
